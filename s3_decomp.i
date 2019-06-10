@@ -27,10 +27,6 @@
     order = FIRST
     family = LAGRANGE
   [../]
-  [./eta]
-    order = FIRST
-    family = LAGRANGE
-  [../]
 []
 
 [ICs]
@@ -52,21 +48,6 @@
 []
 
 [Kernels]
-  [./detadt]
-    type = TimeDerivative
-    variable = eta
-  [../]
-  [./ACBulk]
-    type = AllenCahn
-    variable = eta
-    args = c
-    f_name = F
-  [../]
-  [./ACInterface]
-    type = ACInterface
-    variable = eta
-    kappa_name = kappa_eta
-  [../]
   [./w_dot]
     variable = w
     v = c
@@ -100,20 +81,18 @@
                    # kappa_c*eV_J*nm_m^2*d
                    # M*nm_m^2/eV_J/d
   [../]
-  [./consts]
-    type = GenericConstantMaterial
-    prop_names  = 'L kappa_eta'
-    prop_values = '2.184e-07 3.6595'
-  [../]
   [./local_energy]
     # Defines the function for the local free energy density as given in the
     # problem, then converts units and adds scaling factor.
     type = DerivativeParsedMaterial
     f_name = f_loc
-    args = 'c eta'
+    args = c
     constant_names = 'A   B   C   D   E   F   G  eV_J  d'
-    constant_expressions = '0.00028 -0.0000165 -0.00017795 0.000194 -0.00036 0.000013231 0.0002 6.24150934e+18 1e-27'
-    function = 'eV_J*d*((3*eta^2-2*eta^3)*(A*c^2+B*c+C)+(1-(3*eta^2-2*eta^3))*(D*c^2+E*c+F)+(G*eta^2*(1-eta)^2))'
+    constant_expressions = '-2.446831e+04 -2.827533e+04 4.167994e+03 7.052907e+03
+                            1.208993e+04 2.568625e+03 -2.354293e+03
+                            6.24150934e+18 1e-27'
+    function = 'eV_J*d*(A*c+B*(1-c)+C*c*log(c)+D*(1-c)*log(1-c)+
+                E*c*(1-c)+F*c*(1-c)*(2*c-1)+G*c*(1-c)*(2*c-1)^2)'
     derivative_order = 2
   [../]
 []
@@ -152,7 +131,7 @@
   l_tol = 1e-6
   nl_max_its = 50
   nl_abs_tol = 1e-9
-  end_time = 1000   # 7 days
+  end_time = 604800   # 7 days
   petsc_options_iname = '-pc_type -ksp_gmres_restart -sub_ksp_type
                          -sub_pc_type -pc_asm_overlap'
   petsc_options_value = 'asm      31                  preonly

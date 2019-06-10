@@ -1,22 +1,18 @@
-#
-# Simulation of an iron-chromium alloy using simplest possible code and a test
-# set of initial conditions.
-#
-
 [Mesh]
   # generate a 2D, 25nm x 25nm mesh
   type = GeneratedMesh
   dim = 2
   elem_type = QUAD4
-  nx = 1000
-  ny = 1
+  nx = 25
+  ny = 25
   nz = 0
   xmin = 0
   xmax = 25
   ymin = 0
-  ymax = 1
+  ymax = 25
   zmin = 0
   zmax = 0
+  uniform_refine = 2
 []
 
 [Variables]
@@ -28,15 +24,20 @@
     order = FIRST
     family = LAGRANGE
   [../]
+  #[./eta]
+  #  order = FIRST
+  #  family = LAGRANGE
+  #[../]
 []
 
 [ICs]
   # Use a bounding box IC at equilibrium concentrations to make sure the
   # model behaves as expected.
   [./testIC]
-    type = FunctionIC
+    type = RandomIC
+    min = 0.1
+    max = 0.9
     variable = c
-    function = x/25
   [../]
 []
 
@@ -44,7 +45,7 @@
   # periodic BC as is usually done on phase-field models
   [./Periodic]
     [./c_bcs]
-      auto_direction = 'y'
+      auto_direction = 'x y'
     [../]
   [../]
 []
@@ -65,20 +66,32 @@
   [../]
   [./coupled_parsed]
     variable = c
+    args = eta
     type = SplitCHParsed
     f_name = f_loc
     kappa_name = kappa_c
     w = w
   [../]
+  #[./timederivative]
+  #  type = TimeDerivative
+  #  variable = eta
+  #[../]
+  #[./acinterface]
+  #  type = ACInterface
+  #  variable = eta
+  #  kappa_name = kappa_op
+  #  mob_name = L
+  #[../]
+  #[./allencahn]
+  #  type = AllenCahn
+  #  variable = eta
+  #  f_name = f_loc
+  #  args = c
+  #[../]
 []
 
 [Materials]
-  # d is a scaling factor that makes it easier for the solution to converge
-  # without changing the results. It is defined in each of the materials and
-  # must have the same value in each one.
   [./constants]
-    # Define constant values kappa_c and M. Eventually M will be replaced with
-    # an equation rather than a constant.
     type = GenericFunctionMaterial
     prop_names = 'kappa_c M'
     prop_values = '8.125e-16*6.24150934e+18*1e+09^2*1e-27
@@ -93,12 +106,8 @@
     f_name = f_loc
     args = c
     constant_names = 'A   B   C   D   E   F   G  eV_J  d'
-    constant_expressions = '-2.446831e+04 -2.827533e+04 4.167994e+03 7.052907e+03
-                            1.208993e+04 2.568625e+03 -2.354293e+03
-                            6.24150934e+18 1e-27'
-    function = 'eV_J*d*(A*c+B*(1-c)+C*c*log(c)+D*(1-c)*log(1-c)+
-                E*c*(1-c)+F*c*(1-c)*(2*c-1)+G*c*(1-c)*(2*c-1)^2)'
-    outputs = exodus
+    constant_expressions = '0.0000260486 0.0000239298 -0.000178164 0.000196227 -0.000365148 0.0000162483 -2.354293e+03 6.24150934e+18 1e-27'
+    function = 'eV_J*d*((3*eta^2-2*eta^3)*(A*c^2+B*c+C)+(1-(3*eta^2-2*eta^3))*(D*c^2+E*c+F)+G*eta^2*(1-eta)^2)'
   [../]
 []
 
@@ -131,5 +140,4 @@
 [Outputs]
   exodus = true
   console = true
-  csv = true
 []

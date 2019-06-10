@@ -1,10 +1,4 @@
-#
-# Simulation of an iron-chromium alloy using simplest possible code and a test
-# set of initial conditions.
-#
-
 [Mesh]
-  # generate a 2D, 25nm x 25nm mesh
   type = GeneratedMesh
   dim = 2
   elem_type = QUAD4
@@ -20,19 +14,17 @@
 []
 
 [Variables]
-  [./c]   # Mole fraction of Cr (unitless)
+  [./c]
     order = FIRST
     family = LAGRANGE
   [../]
-  [./w]   # Chemical potential (eV/mol)
+  [./w]
     order = FIRST
     family = LAGRANGE
   [../]
 []
 
 [ICs]
-  # Use a bounding box IC at equilibrium concentrations to make sure the
-  # model behaves as expected.
   [./testIC]
     type = FunctionIC
     variable = c
@@ -41,7 +33,6 @@
 []
 
 [BCs]
-  # periodic BC as is usually done on phase-field models
   [./Periodic]
     [./c_bcs]
       auto_direction = 'y'
@@ -50,9 +41,6 @@
 []
 
 [Kernels]
-  # See wiki page "Developing Phase Field Models" for more information on Split
-  # Cahn-Hilliard equation kernels.
-  # http://mooseframework.org/wiki/PhysicsModules/PhaseField/DevelopingModels/
   #active = ' '
   [./w_dot]
     variable = w
@@ -74,22 +62,14 @@
 []
 
 [Materials]
-  # d is a scaling factor that makes it easier for the solution to converge
-  # without changing the results. It is defined in each of the materials and
-  # must have the same value in each one.
   [./constants]
-    # Define constant values kappa_c and M. Eventually M will be replaced with
-    # an equation rather than a constant.
     type = GenericFunctionMaterial
     prop_names = 'kappa_c M'
     prop_values = '8.125e-16*6.24150934e+18*1e+09^2*1e-27
                    2.2841e-26*1e+09^2/6.24150934e+18/1e-27'
-                   # kappa_c*eV_J*nm_m^2*d
-                   # M*nm_m^2/eV_J/d
+
   [../]
   [./local_energy]
-    # Defines the function for the local free energy density as given in the
-    # problem, then converts units and adds scaling factor.
     type = DerivativeParsedMaterial
     f_name = f_loc
     args = c
@@ -114,9 +94,6 @@
 #[]
 
 [Preconditioning]
-  # Preconditioning is required for Newton's method. See wiki page "Solving
-  # Phase Field Models" for more information.
-  # http://mooseframework.org/wiki/PhysicsModules/PhaseField/SolvingModels/
   [./coupled]
     type = SMP
     full = true
