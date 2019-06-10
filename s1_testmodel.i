@@ -1,17 +1,17 @@
 [Mesh]
   # generate a 2D, 25nm x 25nm mesh
   type = GeneratedMesh
-  dim = 2
-  elem_type = QUAD4
-  nx = 25
-  ny = 25
-  nz = 0
+  dim = 3
+  elem_type = PRISM6
+  nx = 5
+  ny = 5
+  nz = 5
   xmin = 0
-  xmax = 25
+  xmax = 5
   ymin = 0
-  ymax = 25
+  ymax = 5
   zmin = 0
-  zmax = 0
+  zmax = 5
   uniform_refine = 2
 []
 
@@ -24,10 +24,10 @@
     order = FIRST
     family = LAGRANGE
   [../]
-  #[./eta]
-  #  order = FIRST
-  #  family = LAGRANGE
-  #[../]
+  [./eta]
+    order = FIRST
+    family = LAGRANGE
+  [../]
 []
 
 [ICs]
@@ -45,7 +45,7 @@
   # periodic BC as is usually done on phase-field models
   [./Periodic]
     [./c_bcs]
-      auto_direction = 'x y'
+      auto_direction = 'x y z'
     [../]
   [../]
 []
@@ -72,29 +72,31 @@
     kappa_name = kappa_c
     w = w
   [../]
-  #[./timederivative]
-  #  type = TimeDerivative
-  #  variable = eta
-  #[../]
-  #[./acinterface]
-  #  type = ACInterface
-  #  variable = eta
-  #  kappa_name = kappa_op
-  #  mob_name = L
-  #[../]
-  #[./allencahn]
-  #  type = AllenCahn
-  #  variable = eta
-  #  f_name = f_loc
-  #  args = c
-  #[../]
+  [./timederivative]
+    type = TimeDerivative
+    variable = eta
+  [../]
+  [./acinterface]
+    type = ACInterface
+    variable = eta
+    kappa_name = kappa_op
+    mob_name = L
+  [../]
+  [./allencahn]
+    type = AllenCahn
+    variable = eta
+    f_name = f_loc
+    args = c
+  [../]
 []
 
 [Materials]
   [./constants]
     type = GenericFunctionMaterial
-    prop_names = 'kappa_c M'
+    prop_names = 'kappa_c M kappa_op L'
     prop_values = '8.125e-16*6.24150934e+18*1e+09^2*1e-27
+                   2.2841e-26*1e+09^2/6.24150934e+18/1e-27
+                   8.125e-16*6.24150934e+18*1e+09^2*1e-27
                    2.2841e-26*1e+09^2/6.24150934e+18/1e-27'
                    # kappa_c*eV_J*nm_m^2*d
                    # M*nm_m^2/eV_J/d
@@ -104,7 +106,7 @@
     # problem, then converts units and adds scaling factor.
     type = DerivativeParsedMaterial
     f_name = f_loc
-    args = c
+    args = 'c eta'
     constant_names = 'A   B   C   D   E   F   G  eV_J  d'
     constant_expressions = '0.0000260486 0.0000239298 -0.000178164 0.000196227 -0.000365148 0.0000162483 -2.354293e+03 6.24150934e+18 1e-27'
     function = 'eV_J*d*((3*eta^2-2*eta^3)*(A*c^2+B*c+C)+(1-(3*eta^2-2*eta^3))*(D*c^2+E*c+F)+G*eta^2*(1-eta)^2)'
