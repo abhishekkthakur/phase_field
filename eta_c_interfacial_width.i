@@ -1,41 +1,59 @@
+width = 25
 [Mesh]
   type = GeneratedMesh
   dim = 2
   elem_type = QUAD4
-  nx = 1000
+  nx = 500
   ny = 1
   nz = 0
   xmin = 0
-  xmax = 25
+  xmax = ${width}
   ymin = 0
   ymax = 1
   zmin = 0
   zmax = 0
 []
 
-[AuxVariables]
+#[AuxVariables]
+#  [./c]
+#    family = LAGRANGE
+#    order = FIRST
+#  [../]
+#  [./fe]
+#    family = MONOMIAL
+#    order = CONSTANT
+#  [../]
+#[]
+
+[Variables]
   [./c]
-    family = MONOMIAL
-    order = CONSTANT
+    order = FIRST
+    family = LAGRANGE
   [../]
-  [./fe]
+  [./w]
+    order = FIRST
+    family = LAGRANGE
+  [../]
+  [./eta]
+    order = FIRST
+    family = LAGRANGE
+  [../]
+[]
+
+[AuxVariables]
+  [./f_tot]
     family = MONOMIAL
     order = CONSTANT
   [../]
 []
 
-[Variables]
-  #[./c]
-  #  order = FIRST
-  #  family = LAGRANGE
-  #[../]
-  #[./w]
-  #  order = FIRST
-  #  family = LAGRANGE
-  #[../]
-  [./eta]
-    order = FIRST
-    family = LAGRANGE
+[AuxKernels]
+  [./f_tot]
+    type = TotalFreeEnergy
+    variable = f_tot
+    kappa_names = kappa_c
+    interfacial_vars = c
+    f_name = f_loc
   [../]
 []
 
@@ -43,12 +61,12 @@
   [./testIC]
     type = FunctionIC
     variable = c
-    function = x/25
+    function = x/${width}
   [../]
   [./test2IC]
     type = FunctionIC
     variable = eta
-    function = (25-x)/25
+    function = (${width}-x)/${width}
   [../]
 []
 
@@ -61,31 +79,24 @@
 []
 
 [Kernels]
-  #active = ' '
-  #[./w_dot]
-  #  variable = w
-  #  v = c
-  #  type = CoupledTimeDerivative
-  #[../]
-  #[./coupled_res]
-  #  variable = w
-  #  type = SplitCHWRes
-  #  mob_name = M
-  #[../]
-  #[./coupled_parsed]
-  #  variable = c
-  #  type = SplitCHParsed
-  #  f_name = f_loc
-  #  kappa_name = kappa_c
-  #  args = eta
-  #  w = w
-  #[../]
-  #[./c_dot]
-  #  variable = w
-  #  type = CoupledTimeDerivative
-  #  v = c
-  #[../]
-
+  [./coupled_res]
+    variable = w
+    type = SplitCHWRes
+    mob_name = M
+  [../]
+  [./coupled_parsed]
+    variable = c
+    type = SplitCHParsed
+    f_name = f_loc
+    kappa_name = kappa_c
+    args = eta
+    w = w
+  [../]
+  [./c_dot]
+    variable = w
+    type = CoupledTimeDerivative
+    v = c
+  [../]
   [./acinterface]
     variable = eta
     type = ACInterface
@@ -101,16 +112,6 @@
   [./eta_dot]
     type = TimeDerivative
     variable = eta
-  [../]
-[]
-
-[AuxKernels]
-  [./fe]
-    type = TotalFreeEnergy
-    variable = fe
-    f_name = 'f_loc'
-    kappa_names = 'kappa_c'
-    interfacial_vars = c
   [../]
 []
 
@@ -130,7 +131,7 @@
     f_name = f_loc
     args = 'c eta'
     constant_names = 'A   B   C   D   E   F   G'
-    constant_expressions = '0.0000260486 0.0000239298 -0.000178164 0.000196227 -0.000365148 0.0000162483 -0.0004'
+    constant_expressions = '0.0000260486 0.0000239298 -0.000178164 0.000196227 -0.000365148 0.0000162483 0.00'
     function = '(3*eta^2-2*eta^3)*(A*c^2+B*c+C) + (1-(3*eta^2-2*eta^3))*(D*c^2+E*c+F) + G*eta^2*(1-eta)^2'
     #function = '(3*eta^2-2*eta^3)*(D*c^2+E*c+F) + (1-(3*eta^2-2*eta^3))*(A*c^2+B*c+C) + G*eta^2*(1-eta)^2'
     outputs = exodus
@@ -138,12 +139,31 @@
 []
 
 [VectorPostprocessors]
-  [./F]
-    type = LineMaterialRealSampler
-    property = f_loc
-    start = '0 0.5 0'
-    end = '25 0.5 0'
-    sort_by = x
+ [./f_loc_sampler]
+   type = LineMaterialRealSampler
+   property = f_loc
+   start = '0 0.5 0'
+   end = '${width} 0.5 0'
+   sort_by = x
+ [../]
+ [./f_tot_sampler]
+   type = LineValueSampler
+   variable = 'f_tot c'
+   start_point = '0 0.5 0'
+   end_point = '${width} 0.5 0'
+   num_points = 500
+   sort_by = x
+ [../]
+[]
+
+[Postprocessors]
+  [./F_tot]
+    type = ElementIntegralVariablePostprocessor
+    variable = f_tot
+  [../]
+  [./C]
+    type = ElementIntegralVariablePostprocessor
+    variable = c
   [../]
 []
 
@@ -155,8 +175,8 @@
 []
 
 [Problem]
-  kernel_coverage_check = false
-  solve = false
+  # kernel_coverage_check = false
+  # solve = false
 []
 
 [Executioner]
@@ -172,13 +192,14 @@
   # petsc_options_value = 'asm      31                  preonly
   #                        ilu          1'
 
-  num_steps = 1
+  num_steps = 100
 
   [./TimeStepper]
     type = IterationAdaptiveDT
     optimal_iterations = 8
+    growth_factor = 1.5
     iteration_window = 2
-    dt = 100
+    dt = 10
   [../]
 []
 

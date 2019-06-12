@@ -33,13 +33,13 @@
     #type = FunctionIC
     type = RandomIC
     variable = c
-    function = x/25
+    #function = x/25
   [../]
   [./test2IC]
     #type = FunctionIC
     type = RandomIC
     variable = eta
-    function = (25-x)/25
+    #function = (25-x)/25
   [../]
 []
 
@@ -111,7 +111,7 @@
     f_name = f_loc
     args = 'c eta'
     constant_names = 'A   B   C   D   E   F   G'
-    constant_expressions = '0.0000260486 0.0000239298 -0.000178164 0.000196227 -0.000365148 0.0000162483 0.00'
+    constant_expressions = '0.0000260486 0.0000239298 -0.000178164 0.000196227 -0.000365148 0.0000162483 0.0003'
     function = '(3*eta^2-2*eta^3)*(A*c^2+B*c+C) + (1-(3*eta^2-2*eta^3))*(D*c^2+E*c+F) + G*eta^2*(1-eta)^2'
     #function = '(3*eta^2-2*eta^3)*(D*c^2+E*c+F) + (1-(3*eta^2-2*eta^3))*(A*c^2+B*c+C) + G*eta^2*(1-eta)^2'
     outputs = exodus
@@ -153,7 +153,7 @@
   # petsc_options_value = 'asm      31                  preonly
   #                        ilu          1'
 
-  num_steps = 604800
+  end_time = 604800
 
   [./TimeStepper]
     type = IterationAdaptiveDT

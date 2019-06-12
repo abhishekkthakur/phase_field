@@ -1,15 +1,14 @@
-width = 25
 [Mesh]
   type = GeneratedMesh
   dim = 2
   elem_type = QUAD4
-  nx = 500
-  ny = 1
+  nx = 100
+  ny = 100
   nz = 0
   xmin = 0
-  xmax = ${width}
+  xmax = 25
   ymin = 0
-  ymax = 1
+  ymax = 25
   zmin = 0
   zmax = 0
 []
@@ -25,40 +24,25 @@ width = 25
   [../]
 []
 
-[AuxVariables]
-  [./f_tot]
-    family = MONOMIAL
-    order = CONSTANT
-  [../]
-[]
-
-[AuxKernels]
-  [./f_tot]
-    type = TotalFreeEnergy
-    variable = f_tot
-    kappa_names = kappa_c
-    interfacial_vars = c
-    f_name = f_loc
-  [../]
-[]
-
 [ICs]
   [./testIC]
-    type = FunctionIC
+    #type = FunctionIC
+    type = RandomIC
     variable = c
-    function = x/${width}
+    #function = x/25
   [../]
 []
 
 [BCs]
   [./Periodic]
     [./c_bcs]
-      auto_direction = 'y'
+      auto_direction = 'x y'
     [../]
   [../]
 []
 
 [Kernels]
+  #active = ' '
   [./w_dot]
     variable = w
     v = c
@@ -76,6 +60,11 @@ width = 25
     kappa_name = kappa_c
     w = w
   [../]
+  #[./c_dot]
+  #  variable = w
+  #  type = CoupledTimeDerivative
+  #  v = c
+  #[../]
 []
 
 [Materials]
@@ -84,10 +73,9 @@ width = 25
     prop_names = 'kappa_c M'
     prop_values = '8.125e-16*6.24150934e+18*1e+09^2*1e-27
                    2.2841e-26*1e+09^2/6.24150934e+18/1e-27'
-
   [../]
   [./local_energy]
-    type = DerivativeParsedMaterial
+    type = thakur
     f_name = f_loc
     args = c
     constant_names = 'A   B   C   D   E   F   G  eV_J  d'
@@ -100,35 +88,6 @@ width = 25
   [../]
 []
 
-[VectorPostprocessors]
- [./f_loc_sampler]
-   type = LineMaterialRealSampler
-   property = f_loc
-   start = '0 0.5 0'
-   end = '${width} 0.5 0'
-   sort_by = x
- [../]
- [./f_tot_sampler]
-   type = LineValueSampler
-   variable = 'f_tot c'
-   start_point = '0 0.5 0'
-   end_point = '${width} 0.5 0'
-   num_points = 500
-   sort_by = x
- [../]
-[]
-
-[Postprocessors]
-  [./F_tot]
-    type = ElementIntegralVariablePostprocessor
-    variable = f_tot
-  [../]
-  [./C]
-    type = ElementIntegralVariablePostprocessor
-    variable = c
-  [../]
-[]
-
 [Preconditioning]
   [./coupled]
     type = SMP
@@ -136,30 +95,17 @@ width = 25
   [../]
 []
 
-#[Problem]
-#  kernel_coverage_check = false
-#  solve = false
-#[]
-
 [Executioner]
   type = Transient
   solve_type = NEWTON
   l_max_its = 30
   l_tol = 1e-6
-  nl_max_its = 20
+  nl_max_its = 50
   nl_abs_tol = 1e-12
-
-  # petsc_options_iname = '-pc_type -ksp_gmres_restart -sub_ksp_type
-  #                        -sub_pc_type -pc_asm_overlap'
-  # petsc_options_value = 'asm      31                  preonly
-  #                        ilu          1'
-
-  num_steps = 100
-
+  end_time = 100
   [./TimeStepper]
     type = IterationAdaptiveDT
     optimal_iterations = 8
-    growth_factor = 1.5
     iteration_window = 2
     dt = 10
   [../]
@@ -168,5 +114,4 @@ width = 25
 [Outputs]
   exodus = true
   console = true
-  csv = true
 []
