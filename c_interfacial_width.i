@@ -127,6 +127,16 @@ width = 25
     type = ElementIntegralVariablePostprocessor
     variable = c
   [../]
+  [./c_avg_left_value]
+    type = SideAverageValue
+    variable = c
+    boundary = left
+  [../]
+  [./c_avg_right_value]
+    type = SideAverageValue
+    variable = c
+    boundary = right
+  [../]
 []
 
 [Preconditioning]
