@@ -3,13 +3,13 @@ width = 25
   type = GeneratedMesh
   dim = 2
   elem_type = QUAD4
-  nx = 500
-  ny = 1
+  nx = 200
+  ny = 200
   nz = 0
   xmin = 0
   xmax = ${width}
   ymin = 0
-  ymax = 1
+  ymax = ${width}
   zmin = 0
   zmax = 0
 []
@@ -59,21 +59,21 @@ width = 25
 
 [ICs]
   [./testIC]
-    type = FunctionIC
+    type = RandomIC
     variable = c
-    function = x/${width}
+    #function = x/${width}
   [../]
   [./test2IC]
-    type = FunctionIC
+    type = RandomIC
     variable = eta
-    function = (${width}-x)/${width}
+    #function = (${width}-x)/${width}
   [../]
 []
 
 [BCs]
   [./Periodic]
     [./c_bcs]
-      auto_direction = 'y'
+      auto_direction = 'x y'
     [../]
   [../]
 []
@@ -138,54 +138,54 @@ width = 25
   [../]
 []
 
-[VectorPostprocessors]
- [./f_loc_sampler]
-   type = LineMaterialRealSampler
-   property = f_loc
-   start = '0 0.5 0'
-   end = '${width} 0.5 0'
-   sort_by = x
- [../]
- [./f_tot_sampler]
-   type = LineValueSampler
-   variable = 'f_tot c'
-   start_point = '0 0.5 0'
-   end_point = '${width} 0.5 0'
-   num_points = 500
-   sort_by = x
- [../]
-[]
+#[VectorPostprocessors]
+# [./f_loc_sampler]
+#   type = LineMaterialRealSampler
+#   property = f_loc
+#   start = '0 0.5 0'
+#   end = '${width} 0.5 0'
+#   sort_by = x
+# [../]
+# [./f_tot_sampler]
+#   type = LineValueSampler
+#   variable = 'f_tot c'
+#   start_point = '0 0.5 0'
+#   end_point = '${width} 0.5 0'
+#   num_points = 500
+#   sort_by = x
+# [../]
+#[]
 
-[Postprocessors]
-  [./F_tot]
-    type = ElementIntegralVariablePostprocessor
-    variable = f_tot
-  [../]
-  [./C]
-    type = ElementIntegralVariablePostprocessor
-    variable = c
-  [../]
-  [./c_avg_left_value]
-    type = SideAverageValue
-    variable = c
-    boundary = left
-  [../]
-  [./c_avg_right_value]
-    type = SideAverageValue
-    variable = c
-    boundary = right
-  [../]
-  [./eta_avg_left_value]
-    type = SideAverageValue
-    variable = eta
-    boundary = left
-  [../]
-  [./eta_avg_right_value]
-    type = SideAverageValue
-    variable = eta
-    boundary = right
-  [../]
-[]
+#[Postprocessors]
+#  [./F_tot]
+#    type = ElementIntegralVariablePostprocessor
+#    variable = f_tot
+#  [../]
+#  [./C]
+#    type = ElementIntegralVariablePostprocessor
+#    variable = c
+#  [../]
+#  [./c_avg_left_value]
+#    type = SideAverageValue
+#    variable = c
+#    boundary = left
+#  [../]
+#  [./c_avg_right_value]
+#    type = SideAverageValue
+#    variable = c
+#    boundary = right
+#  [../]
+#  [./eta_avg_left_value]
+#    type = SideAverageValue
+#    variable = eta
+#    boundary = left
+#  [../]
+#  [./eta_avg_right_value]
+#    type = SideAverageValue
+#    variable = eta
+#    boundary = right
+#  [../]
+#[]
 
 [Preconditioning]
   [./coupled]
@@ -212,7 +212,7 @@ width = 25
   # petsc_options_value = 'asm      31                  preonly
   #                        ilu          1'
 
-  num_steps = 100
+  num_steps = 200
 
   [./TimeStepper]
     type = IterationAdaptiveDT
