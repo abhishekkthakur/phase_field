@@ -4,7 +4,7 @@
   type = GeneratedMesh
   dim = 2
   elem_type = QUAD4
-  nx = 500
+  nx = 200
   ny = 1
   nz = 0
   xmin = 0
@@ -90,7 +90,9 @@
 
   [./ic_func_c]
     type = ParsedFunction
-    value = (20-x)/20
+    #value = -(20-x)/20
+    #value = 20/(20-x)
+    value = x/20
     #value = 0.9*(0.5*(1.0-tanh(x/sqrt(2.0))))^3*(6*(0.5*(1.0-tanh(x/sqrt(2.0))))^2-15*(0.5*(1.0-tanh(x/sqrt(2.0))))+10)+0.1*(1-(0.5*(1.0-tanh(x/sqrt(2.0))))^3*(6*(0.5*(1.0-tanh(x/sqrt(2.0))))^2-15*(0.5*(1.0-tanh(x/sqrt(2.0))))+10))
   [../]
 []
@@ -110,21 +112,21 @@
   [../]
 []
 
-[BCs]
-  [./left_c]
-    type = DirichletBC
-    variable = 'c'
-    boundary = 'left'
-    value = 0.9
-  [../]
-
-  [./left_eta]
-    type = DirichletBC
-    variable = 'eta'
-    boundary = 'left'
-    value = 0.1
-  [../]
-[]
+#[BCs]
+#  [./left_c]
+#    type = DirichletBC
+#    variable = 'c'
+#    boundary = 'left'
+#    value = 0.9
+#  [../]
+#
+#  [./left_eta]
+#    type = DirichletBC
+#    variable = 'eta'
+#    boundary = 'left'
+#    value = 0.1
+#  [../]
+#[]
 
 [Materials]
   [./fl]
@@ -248,10 +250,16 @@
 
   l_max_its = 100
   nl_max_its = 100
-  nl_abs_tol = 1e-10
+  nl_abs_tol = 1e-11
 
-  end_time = 100
-  dt = 1.0
+  end_time = 1000000
+  #dt = 1
+  [./TimeStepper]
+    type = IterationAdaptiveDT
+    optimal_iterations = 7
+    iteration_window = 2
+    dt = 10.0
+  [../]
 []
 
 #
@@ -269,11 +277,20 @@
     type = NumDOFs
   [../]
 
-  [./integral]
-    type = ElementL2Error
-    variable = eta
-    function = ic_func_eta
+  [./F_tot]
+      type = ElementIntegralVariablePostprocessor
+      variable = Fglobal
   [../]
+
+  [./C]
+      type = ElementAverageValue
+      variable = c
+  [../]
+#  [./integral]
+#    type = ElementL2Error
+#    variable = eta
+#    function = ic_func_eta
+#  [../]
 []
 
 [Outputs]
