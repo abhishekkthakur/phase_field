@@ -4,11 +4,11 @@
   type = GeneratedMesh
   dim = 2
   elem_type = QUAD4
-  nx = 200
+  nx = 400
   ny = 1
   nz = 0
-  xmin = 0
-  xmax = 20
+  xmin = -10
+  xmax = 10
   ymin = 0
   ymax = 1
   zmin = 0
@@ -70,13 +70,11 @@
   [./cl]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.1
   [../]
 
   [./cs]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.9
   [../]
 []
 
@@ -84,15 +82,14 @@
 [Functions]
   [./ic_func_eta]
     type = ParsedFunction
-    value = x/20
-    #value = 0.5*(1.0-tanh((x)/sqrt(2.0)))
+    # value = x/20
+    value = (tanh(x)+1)/2
   [../]
 
   [./ic_func_c]
     type = ParsedFunction
-    #value = -(20-x)/20
-    #value = 20/(20-x)
-    value = x/20
+    # value = x/20
+    value = (tanh(x*5)+1)/2
     #value = 0.9*(0.5*(1.0-tanh(x/sqrt(2.0))))^3*(6*(0.5*(1.0-tanh(x/sqrt(2.0))))^2-15*(0.5*(1.0-tanh(x/sqrt(2.0))))+10)+0.1*(1-(0.5*(1.0-tanh(x/sqrt(2.0))))^3*(6*(0.5*(1.0-tanh(x/sqrt(2.0))))^2-15*(0.5*(1.0-tanh(x/sqrt(2.0))))+10))
   [../]
 []
@@ -158,7 +155,7 @@
   [./constants]
     type = GenericConstantMaterial
     prop_names  = 'M   L   eps_sq'
-    prop_values = '0.7 0.7 0.1  '    # Don't know what values to take for M, L and eps_sq
+    prop_values = '0.7 0.7 0.025  '    # Don't know what values to take for M, L and eps_sq
   [../]
 []
 
@@ -252,13 +249,17 @@
   nl_max_its = 100
   nl_abs_tol = 1e-11
 
-  end_time = 1000000
+  end_time = 1e7
   #dt = 1
   [./TimeStepper]
     type = IterationAdaptiveDT
-    optimal_iterations = 7
+    optimal_iterations = 8
     iteration_window = 2
-    dt = 10.0
+    dt = 100.0
+  [../]
+  [./Predictor]
+    type = SimplePredictor
+    scale = 0.5
   [../]
 []
 
