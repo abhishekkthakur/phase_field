@@ -4,13 +4,13 @@
   type = GeneratedMesh
   dim = 2
   elem_type = QUAD4
-  nx = 400
-  ny = 400
+  nx = 200
+  ny = 1
   nz = 0
-  xmin = -5
-  xmax = 5
-  ymin = -5
-  ymax = 5
+  xmin = -10
+  xmax = 10
+  ymin = 0
+  ymax = 1
   zmin = 0
   zmax = 0
 []
@@ -79,37 +79,37 @@
 []
 
 # Defining the equilibrium phase field profile as described in the KKS model.
-#[Functions]
-#  [./ic_func_eta]
-#    type = ParsedFunction
-#    #value = x/20
-#    value = (tanh(x)+1)/2
-#  [../]
-#
-#  [./ic_func_c]
-#    type = ParsedFunction
-#    #value = x/20
-#    value = (tanh(x*5)+1)/2
-#    #value = 0.9*(0.5*(1.0-tanh(x/sqrt(2.0))))^3*(6*(0.5*(1.0-tanh(x/sqrt(2.0))))^2-15*(0.5*(1.0-tanh(x/sqrt(2.0))))+10)+0.1*(1-(0.5*(1.0-tanh(x/sqrt(2.0))))^3*(6*(0.5*(1.0-tanh(x/sqrt(2.0))))^2-15*(0.5*(1.0-tanh(x/sqrt(2.0))))+10))
-#  [../]
-#[]
+[Functions]
+  [./ic_func_eta]
+    type = ParsedFunction
+    #value = x/20
+    value = (tanh(x)+1)/2
+  [../]
+
+  [./ic_func_c]
+    type = ParsedFunction
+    #value = x/20
+    value = (tanh(x*5)+1)/2
+    #value = 0.9*(0.5*(1.0-tanh(x/sqrt(2.0))))^3*(6*(0.5*(1.0-tanh(x/sqrt(2.0))))^2-15*(0.5*(1.0-tanh(x/sqrt(2.0))))+10)+0.1*(1-(0.5*(1.0-tanh(x/sqrt(2.0))))^3*(6*(0.5*(1.0-tanh(x/sqrt(2.0))))^2-15*(0.5*(1.0-tanh(x/sqrt(2.0))))+10))
+  [../]
+[]
 
 [ICs]
   [./eta]
     variable = eta
-    #type = FunctionIC
-    type = RandomIC
-    min = 0.4
-    max = 0.6
-    #function = ic_func_eta
+    type = FunctionIC
+    #type = RandomIC
+    #min = 0.4
+    #max = 0.6
+    function = ic_func_eta
   [../]
   [./c]
     variable = c
-    #type = FunctionIC
-    type = RandomIC
-    min = 0.4
-    max = 0.6
-    #function = ic_func_c
+    type = FunctionIC
+    #type = RandomIC
+    #min = 0.4
+    #max = 0.6
+    function = ic_func_c
   [../]
 []
 
@@ -133,15 +133,15 @@
   [./fl]
     type = DerivativeParsedMaterial
     f_name = fl
-    args = 'cl'
-    function = '0.0000260486*cl^2+0.0000239298*cl-0.000178164' # This is the left parabolic equation.
+    args = 'cl cs'
+    function = '-0.277903*(1-cs-cl) + 100*cs + 200*cl - 4.32*cl*cl + 7.8*cs*cs - 37.716*cs*cl + 4157*((1-cs-cl)*log(1-cs-cl) + cs*log(cs) + cl*log(cl)) + 0.51*cs*(1-cs-cl) + 16.65*cs*cl + 6.76*cs*(1-cs-cl)' # This is the left parabolic equation.
   [../]
 
   [./fs]
     type = DerivativeParsedMaterial
     f_name = fs
-    args = 'cs'
-    function = '0.000196227*cs^2-0.000365148*cs+0.0000162483' # This is the right parabolic equation.
+    args = 'cl cs'
+    function = '5000*(1-cs-cl) + 500*cs + 0.1814162*cl + 3.06*(1-cs-cl)*cs + 40.56*(1-cs-cl)*cl + 4157*((1-cs-cl)*log(1-cs-cl) + cs*log(cs) + cl*log(cl)) + 0.51*cs*(1-cs-cl) + 16.65*cs*cl + 6.76*cl*(1-cs-cl)' # This is the right parabolic equation.
   [../]
 
   [./h_eta]
