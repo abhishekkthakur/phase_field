@@ -135,13 +135,16 @@
     type = DerivativeParsedMaterial
     f_name = F2
     args = 'c1 c2 c3'
-    function = 'c1*-2000 + c2*200 + c3*5000'
+    function = 'c1*-10188.7188728 + c2*-20942.3072556 + c3*9706.34216186 + 6*c1*c3*16.65 + 6*c1*c2*6.76 + 6*c1*c1*-10
+                + 0.5*8.314*300*(2*c1*log(2*c1) + (1-2*c1)*log(1-2*c1))
+                + c1*c2*0.51 + c1*c3*6.76 + c2*c3*16.65'
   [../]
   [./f3]
     type = DerivativeParsedMaterial
     f_name = F3
     args = 'c1 c2 c3'
-    function = '20*(c3-0.8)^2'
+    function = 'c1*-15100 + c2*-750 + c3*5000
+                + 0.42857*8.314*300*(2.33*c2*log(2.33*c2) + (1-2.33*c2)*log(1-2.33*c2))'
   [../]
 
   # Switching functions for each phase

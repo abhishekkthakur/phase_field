@@ -37,6 +37,11 @@ G0U3As4_p3 = 1000
 G0Nd_p3 = 5000
 G0As_p3 = 1000
 
+print ('G0U_p1: {}'.format(G0U_p1))
+print ('G0U_p2: {}'.format(G0U_p2))
+print ('G0Nd_p2: {}'.format(G0Nd_p2))
+print ('G0As_p3: {}'.format(G0As_p2))
+
 # Converting reference energy part from J/mol to eV.
 G0U_p1 = G0U_p1 * (1/96488)
 G0Nd_p1 = G0Nd_p1 * (1/96488)
