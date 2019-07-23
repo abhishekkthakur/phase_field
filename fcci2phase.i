@@ -38,12 +38,12 @@
     family = LAGRANGE
   [../]
 
-  [./cl]
+  [./xnd]
     order = FIRST
     family = LAGRANGE
   [../]
 
-  [./cs]
+  [./xas]
     order = FIRST
     family = LAGRANGE
   [../]
@@ -88,21 +88,26 @@
   [./fl]
     type = DerivativeParsedMaterial
     f_name = fl
-    args = 'cl cs'
-    #function = '(1-cl-cs)*-15188.7188728 + cl*5000 + cs*5000 + 3*cs*cs*-1.44 + 3*cl*cl*2.60 + 3*cl*cs*-3.225
+    args = 'xnd xas'
+    function = '-12.572 + 7*((xnd-0.5)*(xnd-0.5) + (xas-0.5)*(xas-0.5))
+                + 0.5*8.314*300*(2*(1-xnd-xas)*log(2*(1-xnd-xas)) + (1-2*(1-xnd-xas))*log(1-2*(1-xnd-xas)))
+                + (1-xnd-xas)*xnd*0.51 + (1-xnd-xas)*xas*6.76 + xnd*xas*16.65'
+    #function = '(1-cl-cs)*-57515.479353 + cl*5000 + cs*5000 + 3*cs*cs*-1.44 + 3*cl*cl*2.60 + 3*cl*cs*-3.225
     #            + 8.314*300*((1-cl-cs)*log(1-cl-cs) + cl*log(cl) + cs*log(cs))
     #            + (1-cl-cs)*cl*4.17 + (1-cl-cs)*cs*-1.04 + cl*cs*-3.225'
-    function = '(1-cl-cs)*1000 + cl*5000 + cs*1000
-                + 0.42857*8.314*300*(2.33*cl*log(2.33*cl) + (1-2.33*cl)*log(1-2.33*cl))'
+    #function = '(1-cl-cs)*1000 + cl*5000 + cs*1000
+    #            + 0.42857*8.314*300*(2.33*cl*log(2.33*cl) + (1-2.33*cl)*log(1-2.33*cl))'
   [../]
 
   [./fs]
     type = DerivativeParsedMaterial
     f_name = fs
-    args = 'cl cs'
-    function = '(1-cl-cs)*-52515.479353 + cl*-75207.7147891 + cs*-30594.038534 + 6*(1-cl-cs)*cs*16.65 + 6*(1-cl-cs)*cl*8.94 + 6*(1-cl-cs)*(1-cl-cs)*-10
-                + 0.5*8.314*300*(2*(1-cl-cs)*log(2*(1-cl-cs)) + (1-2*(1-cl-cs))*log(1-2*(1-cl-cs)))
-                + (1-cl-cs)*cl*0.51 + (1-cl-cs)*cs*6.76 + cl*cs*16.65'
+    args = 'xnd xas'
+    function = '(1-xnd-xas)*1000 + xnd*5000 + xas*1000
+                + 0.42857*8.314*300*(2.33*xnd*log(2.33*xnd) + (1-2.33*xnd)*log(1-2.33*xnd))'
+    #function = '(1-cl-cs)*-52515.479353 + cl*-75207.7147891 + cs*-30594.038534 + 6*(1-cl-cs)*cs*16.65 + 6*(1-cl-cs)*cl*8.94 + 6*(1-cl-cs)*(1-cl-cs)*-10
+    #            + 0.5*8.314*300*(2*(1-cl-cs)*log(2*(1-cl-cs)) + (1-2*(1-cl-cs))*log(1-2*(1-cl-cs)))
+    #            + (1-cl-cs)*cl*0.51 + (1-cl-cs)*cs*6.76 + cl*cs*16.65'
   [../]
 
   [./h_eta]
@@ -120,23 +125,23 @@
   [./constants]
     type = GenericConstantMaterial
     prop_names  = 'M   L   eps_sq'
-    prop_values = '0.7 0.7 0.1  '    # eps_sq is the gradient energy coefficient.
+    prop_values = '0.7 0.7 0.0175  '    # eps_sq is the gradient energy coefficient.
   [../]
 []
 
 [Kernels]
   [./PhaseConc]
     type = KKSPhaseConcentration
-    ca       = cl
-    variable = cs
+    ca       = xnd
+    variable = xas
     c        = c
     eta      = eta
   [../]
 
   [./ChemPotSolute]
     type = KKSPhaseChemicalPotential
-    variable = cl
-    cb       = cs
+    variable = xnd
+    cb       = xas
     fa_name  = fl
     fb_name  = fs
   [../]
@@ -144,8 +149,8 @@
   [./CHBulk]
     type = KKSSplitCHCRes
     variable = c
-    ca       = cl
-    cb       = cs
+    ca       = xnd
+    cb       = xas
     fa_name  = fl
     fb_name  = fs
     w        = w
@@ -168,15 +173,15 @@
     variable = eta
     fa_name  = fl
     fb_name  = fs
-    w       = 10.0           # DW height parameter
-    args = 'cl cs'
+    w       = 0.7           # DW height parameter
+    args = 'xnd xas'
   [../]
 
   [./ACBulkC]
     type = KKSACBulkC
     variable = eta
-    ca       = cl
-    cb       = cs
+    ca       = xnd
+    cb       = xas
     fa_name  = fl
     fb_name  = fs
   [../]
@@ -199,7 +204,7 @@
     type = KKSGlobalFreeEnergy
     fa_name = fl
     fb_name = fs
-    w = 10.0                   # DW height parameter
+    w = 0.7                   # DW height parameter
   [../]
 []
 

@@ -54,28 +54,28 @@ G0Nd_p3 =  G0Nd_p3 * (1/96488)
 G0As_p3 =  G0As_p3 / 96488
 
 
-X = 0.251
+xnd = 0.251
 xvalues = []
 yvalues = []
 gibbs_energy_phase_1 = []
 gibbs_energy_phase_2 = []
 gibbs_energy_phase_3 = []
-while (X < 0.425):
-    Y = X
-    xvalues.append(X)
-    yvalues.append(Y)
+while (xnd < 0.425):
+    xas = xnd
+    xvalues.append(xnd)
+    yvalues.append(xas)
     # Mechanical mixing part
-    gmm_p1 = (1-X-Y)*G0U_p1 + X*G0Nd_p1 + Y*G0As_p1 + 3*(Y*Y)*dEAsAs_p1 + 3*(X*X)*dENdNd_p1 + 3*(X*Y)*dENdAs_p1
-    gmm_p2 = dENdAs + factor*((X-0.5)*(X-0.5) + (Y-0.5)*(Y-0.5))
-    gmm_p3 = (1-X-Y)*G0U3As4_p3 + X*G0Nd_p3 + Y*G0As_p3
+    gmm_p1 = (1-xnd-xas)*G0U_p1 + xnd*G0Nd_p1 + xas*G0As_p1 + 3*(xas*xas)*dEAsAs_p1 + 3*(xnd*xnd)*dENdNd_p1 + 3*(xnd*xas)*dENdAs_p1
+    gmm_p2 = dENdAs + factor*((xnd-0.5)*(xnd-0.5) + (xas-0.5)*(xas-0.5))
+    gmm_p3 = (1-xnd-xas)*G0U3As4_p3 + xnd*G0Nd_p3 + xas*G0As_p3
     # Ideal part
-    gid_p1 = R*T*((1-X-Y)*math.log(1-X-Y) + X*math.log(X) + Y*math.log(Y))
-    gid_p2 = 0.5*R*T*(2*(1-X-Y)*math.log(2*(1-X-Y)) + (1-2*(1-X-Y))*math.log(1-2*(1-X-Y)))
-    gid_p3 = (3/7)*R*T*((7/3)*X*math.log((7/3)*X) + (1-(7/3)*X)*math.log(1-(7/3)*X))
+    gid_p1 = R*T*((1-xnd-xas)*math.log(1-xnd-xas) + xnd*math.log(xnd) + xas*math.log(xas))
+    gid_p2 = 0.5*R*T*(2*(1-xnd-xas)*math.log(2*(1-xnd-xas)) + (1-2*(1-xnd-xas))*math.log(1-2*(1-xnd-xas)))
+    gid_p3 = (3/7)*R*T*((7/3)*xnd*math.log((7/3)*xnd) + (1-(7/3)*xnd)*math.log(1-(7/3)*xnd))
 
     # Excess part
-    gex_p1 = ((1-X-Y)*X)*L0UNd_p1 + (X*Y)*L0NdAs_p1 + ((1-X-Y)*Y)*L0UAs_p1
-    gex_p2 = ((1-X-Y)*X)*L0UNd_p2 + (X*Y)*L0NdAs_p2 + ((1-X-Y)*Y)*L0UAs_p2
+    gex_p1 = ((1-xnd-xas)*xnd)*L0UNd_p1 + (xnd*xas)*L0NdAs_p1 + ((1-xnd-xas)*xas)*L0UAs_p1
+    gex_p2 = ((1-xnd-xas)*xnd)*L0UNd_p2 + (xnd*xas)*L0NdAs_p2 + ((1-xnd-xas)*xas)*L0UAs_p2
     gex_p3 = 0
 
     # For phase 1
@@ -90,9 +90,9 @@ while (X < 0.425):
     Gp3 = gmm_p3 + gid_p3 + gex_p3
     gibbs_energy_phase_3.append(Gp3)
 
-    X = X + 0.001
+    xnd = xnd + 0.001
 
-plt.plot(xvalues, gibbs_energy_phase_1, label = r'$Phase 1 (U)$')
+#plt.plot(xvalues, gibbs_energy_phase_1, label = r'$Phase 1 (U)$')
 plt.plot(xvalues, gibbs_energy_phase_2, label = r'$Phase 2 (NdAs)$')
 plt.plot(xvalues, gibbs_energy_phase_3, label = r'$Phase 3 (U_3As_4)$')
 plt.legend()
