@@ -5,13 +5,13 @@
 [Mesh]
   type = GeneratedMesh
   dim = 2
-  nx = 50
-  ny = 50
+  nx = 200
+  ny = 1
   nz = 0
-  xmin = -40
-  xmax = 40
-  ymin = -40
-  ymax = 40
+  xmin = -10
+  xmax = 10
+  ymin = 0
+  ymax = 1
   zmin = 0
   zmax = 0
   elem_type = QUAD4
@@ -65,12 +65,12 @@
   [./xu1]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.3
+    initial_condition = 0.001
   [../]
   [./xu2]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.3
+    initial_condition = 0.001
   [../]
   # phase concentration 2
   [./xnd1]
@@ -87,12 +87,12 @@
   [./xas1]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.35
+    initial_condition = 0.47
   [../]
   [./xas2]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.35
+    initial_condition = 0.47
   [../]
   # Lagrange multiplier
   [./lambda]
@@ -132,7 +132,7 @@
     #function = f_eta1
     type = RandomIC
     min = 0.1
-    max = 0.9
+    max = 0.2
     #type = SmoothCircleIC
     #x1 = 20.0
     #y1 = 20.0
@@ -146,8 +146,8 @@
     #type = FunctionIC
     #function = f_eta2
     type = RandomIC
-    min = 0.1
-    max = 0.9
+    min = 0.4
+    max = 0.6
     #type = SmoothCircleIC
     #x1 = 20.0
     #y1 = 20.0
@@ -161,8 +161,8 @@
     #type = FunctionIC
     #function = f_eta3
     type = RandomIC
-    min = 0.1
-    max = 0.9
+    min = 0.4
+    max = 0.6
   [../]
   [./c1]
     variable = c1
@@ -170,7 +170,7 @@
     #function = f_c
     type = RandomIC
     min = 0.4
-    max = 0.9
+    max = 0.5
     #type = SmoothCircleIC
     #x1 = 20.0
     #y1 = 20.0
@@ -182,8 +182,8 @@
   [./c2]
     variable = c2
     type = RandomIC
-    min = 0.4
-    max = 0.9
+    min = 0.1
+    max = 0.4
   [../]
 []
 

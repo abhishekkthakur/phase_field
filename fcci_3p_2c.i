@@ -5,13 +5,13 @@
 [Mesh]
   type = GeneratedMesh
   dim = 2
-  nx = 50
-  ny = 50
+  nx = 200
+  ny = 1
   nz = 0
-  xmin = -40
-  xmax = 40
-  ymin = -40
-  ymax = 40
+  xmin = -10
+  xmax = 10
+  ymin = 0
+  ymax = 1
   zmin = 0
   zmax = 0
   elem_type = QUAD4
@@ -34,11 +34,11 @@
 
 [Variables]
   # concentration
-  [./c1]
+  [./xAs]
     order = FIRST
     family = LAGRANGE
   [../]
-  [./c2]
+  [./xNd]
     order = FIRST
     family = LAGRANGE
   [../]
@@ -62,38 +62,39 @@
   [../]
 
   # phase concentration 1
-  [./xu1]
+  [./xAs1]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.3
+    initial_condition = 0.7
   [../]
-  [./xu2]
+  [./xNd1]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.3
+    initial_condition = 0.1
   [../]
   # phase concentration 2
-  [./xnd1]
+  [./xAs2]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.35
+    initial_condition = 0.8
   [../]
-  [./xnd2]
+  [./xNd2]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.35
+    initial_condition = 0.11
   [../]
   # phase concentration 3
-  [./xas1]
+  [./xAs3]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.35
+    initial_condition = 0.55
   [../]
-  [./xas2]
+  [./xNd3]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.35
+    initial_condition = 0.11
   [../]
+
   # Lagrange multiplier
   [./lambda]
     order = FIRST
@@ -131,8 +132,8 @@
     #type = FunctionIC
     #function = f_eta1
     type = RandomIC
-    min = 0.1
-    max = 0.9
+    min = 0.4
+    max = 0.6
     #type = SmoothCircleIC
     #x1 = 20.0
     #y1 = 20.0
@@ -146,8 +147,8 @@
     #type = FunctionIC
     #function = f_eta2
     type = RandomIC
-    min = 0.1
-    max = 0.9
+    min = 0.2
+    max = 0.3
     #type = SmoothCircleIC
     #x1 = 20.0
     #y1 = 20.0
@@ -162,15 +163,15 @@
     #function = f_eta3
     type = RandomIC
     min = 0.1
-    max = 0.9
+    max = 0.2
   [../]
-  [./c1]
-    variable = c1
+  [./xAs]
+    variable = xAs
     #type = FunctionIC
     #function = f_c
     type = RandomIC
     min = 0.4
-    max = 0.9
+    max = 0.5
     #type = SmoothCircleIC
     #x1 = 20.0
     #y1 = 20.0
@@ -179,11 +180,11 @@
     #outvalue = 0.5
     #int_width = 2
   [../]
-  [./c2]
-    variable = c2
+  [./xNd]
+    variable = xNd
     type = RandomIC
     min = 0.4
-    max = 0.9
+    max = 0.5
   [../]
 []
 
@@ -192,27 +193,27 @@
   [./f1]
     type = DerivativeParsedMaterial
     f_name = F1
-    args = 'xu1 xnd1 xas1'
-    function = 'xu1*-0.15608 + xnd1*0.05182 + xas1*0.05182 + 3*xas1*xas1*-1.44 + 3*xnd1*xnd1*2.60 + 3*xnd1*xas1*-3.225
-                + 8.314*300*(xu1*log(xu1) + xnd1*log(xnd1) + xas1*log(xas1))
-                + xu1*xnd1*4.17 + xu1*xas1*-1.04 + xnd1*xas1*-3.225'
+    args = 'xAs1 xNd1'
+    function = 'xU1:=1-xAs1-xNd1; xU1*-0.15608 + xNd1*0.05182 + xAs1*0.05182 + 3*xAs1*xAs1*-1.44 + 3*xNd1*xNd1*2.60 + 3*xNd1*xAs1*-3.225
+                + 8.314*300*(xU1*log(xU1) + xNd1*log(xNd1) + xAs1*log(xAs1))
+                + xU1*xNd1*4.17 + xU1*xAs1*-1.04 + xNd1*xAs1*-3.225'
   [../]
   [./f2]
     type = DerivativeParsedMaterial
     f_name = F2
-    args = 'xu2 xnd2 xas2'
-    function = '-12.572 + 7*((xnd2-0.5)*(xnd2-0.5) + (xas2-0.5)*(xas2-0.5))
-                + 0.5*8.314*300*(2*xu2*log(2*xu2) + (1-2*xu2)*log(1-2*xu2))
-                + xu2*xnd2*1.01 + xu2*xas2*11.38 + xnd2*xas2*16.65'
+    args = 'xAs2 xNd2'
+    function = 'xU2:=1-xAs2-xNd2; -12.572 + 7*((xNd2-0.5)*(xNd2-0.5) + (xAs2-0.5)*(xAs2-0.5))
+                + 0.5*8.314*300*(2*xU2*log(2*xU2) + (1-2*xU2)*log(1-2*xU2))
+                + xU2*xNd2*1.01 + xU2*xAs2*11.38 + xNd2*xAs2*16.65'
   [../]
   [./f3]
     type = DerivativeParsedMaterial
     f_name = F3
-    args = 'xu1 xnd1 xas1 xu2 xnd2 xas2'
+    args = 'xAs3 xNd3'
     # If you remove the excess part from the equation below then the solution will converge.
-    function = '(1-xu1-xu2)*-0.08724 + (1-xnd1-xnd2)*-0.23777 + (1-xas1-xas2)*-0.23205
-                + 8.314*300*((1-xu1-xu2)*log((1-xu1-xu2)) + (1-xnd1-xnd2)*log((1-xnd1-xnd2)) + (1-xas1-xas2)*log((1-xas1-xas2)))
-                + (1-xu1-xu2)*(1-xnd1-xnd2)*-1.46 + (1-xnd1-xnd2)*(1-xas1-xas2)*3.6 + (1-xu1-xu2)*(1-xas1-xas2)*3.52'
+    function = 'xU3:=1-xAs3-xNd3; xU3*-0.08724 + xNd3*-0.23777 + xAs3*-0.23205
+                + 8.314*300*(xU3*log(xU3) + xNd3*log(xNd3) + xAs3*log(xAs3))
+                + xU3*xNd3*-1.46 + xNd3*xAs3*3.6 + xU3*xAs3*3.52'
   [../]
 
   # Switching functions for each phase
@@ -294,51 +295,51 @@
   # This is for 1st global concentration.
   [./diff_time_1]
     type = TimeDerivative
-    variable = c1
+    variable = xNd
   [../]
   [./diff_c1_1]
     type = MatDiffusion
-    variable = c1
-    D_name = Dh1
-    conc = xu1
-  [../]
-  [./diff_c2_1]
-    type = MatDiffusion
-    variable = c1
+    variable = xNd
     D_name = Dh2
-    conc = xnd1
+    conc = xNd1
   [../]
-  [./diff_c3_1]
+  [./diff_c1_2]
     type = MatDiffusion
-    variable = c1
+    variable = xNd
     D_name = Dh3
-    conc = xas1
+    conc = xNd2
   [../]
+  [./diff_c1_3]
+    type = MatDiffusion
+    variable = xNd
+    D_name = Dh3
+    conc = xNd3
+  [../]
+
 
   # This is for 2nd global concentration.
   [./diff_time_2]
     type = TimeDerivative
-    variable = c2
+    variable = xAs
   [../]
-  [./diff_c1_2]
+  [./diff_c2_1]
     type = MatDiffusion
-    variable = c2
-    D_name = Dh1
-    conc = xu2
+    variable = xAs
+    D_name = Dh2
+    conc = xAs1
   [../]
   [./diff_c2_2]
     type = MatDiffusion
-    variable = c2
-    D_name = Dh2
-    conc = xnd2
-  [../]
-  [./diff_c3_2]
-    type = MatDiffusion
-    variable = c2
+    variable = xAs
     D_name = Dh3
-    conc = xas2
+    conc = xAs2
   [../]
-
+  [./diff_c2_3]
+    type = MatDiffusion
+    variable = xAs
+    D_name = Dh3
+    conc = xAs3
+  [../]
 
 
 
@@ -362,16 +363,16 @@
     gi_name   = g1
     eta_i     = eta1
     wi        = 1.0
-    args      = 'xu1 xnd1 xas1 xu2 xnd2 xas2 eta2 eta3'
+    args      = 'xNd1 xNd2 xNd3 xAs1 xAs2 xAs3 eta2 eta3'
   [../]
   [./ACBulkC1_1]
     type = KKSMultiACBulkC
     variable  = eta1
     Fj_names  = 'F1 F2 F3'
     hj_names  = 'h1 h2 h3'
-    cj_names  = 'xu1 xnd1 xas1'
+    cj_names  = 'xNd1 xNd2 xNd3'
     eta_i     = eta1
-    args      = 'xu2 xnd2 xas2 eta2 eta3'
+    args      = 'xAs1 xAs2 xAs3 eta2 eta3'
   [../]
   [./ACInterface1_1]
     type = ACInterface
@@ -401,16 +402,16 @@
     gi_name   = g1
     eta_i     = eta1
     wi        = 1.0
-    args      = 'xu1 xnd1 xas1 xu2 xnd2 xas2 eta2 eta3'
+    args      = 'xNd1 xNd2 xNd3 xAs1 xAs2 xAs3 eta2 eta3'
   [../]
   [./ACBulkC1_2]
     type = KKSMultiACBulkC
     variable  = eta1
     Fj_names  = 'F1 F2 F3'
     hj_names  = 'h1 h2 h3'
-    cj_names  = 'xu2 xnd2 xas2'
+    cj_names  = 'xAs1 xAs2 xAs3'
     eta_i     = eta1
-    args      = 'xu1 xnd1 xas1 eta2 eta3'
+    args      = 'xNd1 xNd2 xNd3 eta2 eta3'
   [../]
   [./ACInterface1_2]
     type = ACInterface
@@ -448,16 +449,16 @@
     gi_name   = g2
     eta_i     = eta2
     wi        = 1.0
-    args      = 'xu1 xnd1 xas1 xu2 xnd2 xas2 eta1 eta3'
+    args      = 'xNd1 xNd2 xNd3 xAs1 xAs2 xAs3 eta1 eta3'
   [../]
   [./ACBulkC2_1]
     type = KKSMultiACBulkC
-    variable  = eta2
-    Fj_names  = 'F1 F2 F3'
-    hj_names  = 'h1 h2 h3'
-    cj_names  = 'xu1 xnd1 xas1'
+    variable  = lambda
+    Fj_names  = 'F1   F2   F3'
+    hj_names  = 'h1   h2   h3'
+    cj_names  = 'xNd1 xNd2 xNd3'
     eta_i     = eta2
-    args      = 'xu2 xnd2 xas2 eta1 eta3'
+    args      = 'xAs1 xAs2 xAs3 eta1 eta3'
   [../]
   [./ACInterface2_1]
     type = ACInterface
@@ -490,16 +491,16 @@
     gi_name   = g2
     eta_i     = eta2
     wi        = 1.0
-    args      = 'xu1 xnd1 xas1 xu2 xnd2 xas2 eta1 eta3'
+    args      = 'xNd1 xNd2 xNd3 xAs1 xAs2 xAs3 eta1 eta3'
   [../]
   [./ACBulkC2_2]
     type = KKSMultiACBulkC
-    variable  = eta2
+    variable  = lambda
     Fj_names  = 'F1 F2 F3'
     hj_names  = 'h1 h2 h3'
-    cj_names  = 'xu2 xnd2 xas2'
+    cj_names  = 'xAs1 xAs2 xAs3'
     eta_i     = eta2
-    args      = 'xu1 xnd1 xas1 eta1 eta3'
+    args      = 'xNd1 xNd2 xNd3 eta1 eta3'
   [../]
   [./ACInterface2_2]
     type = ACInterface
@@ -543,16 +544,16 @@
     eta_i     = eta1
     wi        = 1.0
     mob_name  = 1
-    args      = 'xu1 xnd1 xas1 xu2 xnd2 xas2 eta2 eta3'
+    args      = 'xNd1 xNd2 xNd3 xAs1 xAs2 xAs3 eta2 eta3'
   [../]
   [./mult_ACBulkC_1_1]
     type = KKSMultiACBulkC
     variable  = lambda
     Fj_names  = 'F1 F2 F3'
     hj_names  = 'h1 h2 h3'
-    cj_names  = 'xu1 xnd1 xas1'
+    cj_names  = 'xNd1 xNd2 xNd3'
     eta_i     = eta1
-    args      = 'xu2 xnd2 xas2 eta2 eta3'
+    args      = 'xAs1 xAs2 xAs3 eta2 eta3'
     mob_name  = 1
   [../]
   [./mult_CoupledACint_1_1]
@@ -571,16 +572,16 @@
     eta_i     = eta2
     wi        = 1.0
     mob_name  = 1
-    args      = 'xu1 xnd1 xas1 xu2 xnd2 xas2 eta1 eta3'
+    args      = 'xNd1 xNd2 xNd3 xAs1 xAs2 xAs3 eta1 eta3'
   [../]
   [./mult_ACBulkC_2_1]
     type = KKSMultiACBulkC
     variable  = lambda
     Fj_names  = 'F1 F2 F3'
     hj_names  = 'h1 h2 h3'
-    cj_names  = 'xu1 xnd1 xas1'
+    cj_names  = 'xNd1 xNd2 xNd3'
     eta_i     = eta2
-    args      = 'xu2 xnd2 xas2 eta1 eta3'
+    args      = 'xAs1 xAs2 xAs3 eta1 eta3'
     mob_name  = 1
   [../]
   [./mult_CoupledACint_2_1]
@@ -599,16 +600,16 @@
     eta_i     = eta3
     wi        = 1.0
     mob_name  = 1
-    args      = 'xu1 xnd1 xas1 xu2 xnd2 xas2 eta1 eta2'
+    args      = 'xNd1 xNd2 xNd3 xAs1 xAs2 xAs3 eta1 eta2'
   [../]
   [./mult_ACBulkC_3_1]
     type = KKSMultiACBulkC
     variable  = lambda
     Fj_names  = 'F1 F2 F3'
     hj_names  = 'h1 h2 h3'
-    cj_names  = 'xu1 xnd1 xas1'
+    cj_names  = 'xNd1 xNd2 xNd3'
     eta_i     = eta3
-    args      = 'xu2 xnd2 xas2 eta1 eta2'
+    args      = 'xAs1 xAs2 xAs3 eta1 eta2'
     mob_name  = 1
   [../]
   [./mult_CoupledACint_3_1]
@@ -642,16 +643,16 @@
     eta_i     = eta1
     wi        = 1.0
     mob_name  = 1
-    args      = 'xu2 xnd2 xas2 xu1 xnd1 xas1 eta2 eta3'
+    args      = 'xNd1 xNd2 xNd3 xAs1 xAs2 xAs3 eta2 eta3'
   [../]
   [./mult_ACBulkC_1_2]
     type = KKSMultiACBulkC
     variable  = lambda
     Fj_names  = 'F1 F2 F3'
     hj_names  = 'h1 h2 h3'
-    cj_names  = 'xu2 xnd2 xas2'
+    cj_names  = 'xAs1 xAs2 xAs3'
     eta_i     = eta1
-    args      = 'xu1 xnd1 xas1 eta2 eta3'
+    args      = 'xNd1 xNd2 xNd3 eta2 eta3'
     mob_name  = 1
   [../]
   [./mult_CoupledACint_1_2]
@@ -670,16 +671,16 @@
     eta_i     = eta2
     wi        = 1.0
     mob_name  = 1
-    args      = 'xu1 xnd1 xas1 xu2 xnd2 xas2 eta1 eta3'
+    args      = 'xNd1 xNd2 xNd3 xAs1 xAs2 xAs3 eta1 eta3'
   [../]
   [./mult_ACBulkC_2_2]
     type = KKSMultiACBulkC
     variable  = lambda
     Fj_names  = 'F1 F2 F3'
     hj_names  = 'h1 h2 h3'
-    cj_names  = 'xu2 xnd2 xas2'
+    cj_names  = 'xAs1 xAs2 xAs3'
     eta_i     = eta2
-    args      = 'xu1 xnd1 xas1 eta1 eta3'
+    args      = 'xNd1 xNd2 xNd3 eta1 eta3'
     mob_name  = 1
   [../]
   [./mult_CoupledACint_2_2]
@@ -698,16 +699,16 @@
     eta_i     = eta3
     wi        = 1.0
     mob_name  = 1
-    args      = 'xu1 xnd1 xas1 xu2 xnd2 xas2 eta1 eta2'
+    args      = 'xNd1 xNd2 xNd3 xAs1 xAs2 xAs3 eta1 eta2'
   [../]
   [./mult_ACBulkC_3_2]
     type = KKSMultiACBulkC
     variable  = lambda
     Fj_names  = 'F1 F2 F3'
     hj_names  = 'h1 h2 h3'
-    cj_names  = 'xu2 xnd2 xas2'
+    cj_names  = 'xAs1 xAs2 xAs3'
     eta_i     = eta3
-    args      = 'xu1 xnd1 xas1 eta1 eta2'
+    args      = 'xNd1 xNd2 xNd3 eta1 eta2'
     mob_name  = 1
   [../]
   [./mult_CoupledACint_3_2]
@@ -768,32 +769,41 @@
   # Phase concentration constraints for global concentration 1.
   [./chempot12_1]
     type = KKSPhaseChemicalPotential
-    variable = xu1
-    args_a = 'xnd1 xnd2'
-    args_b = 'xas1 xas2'
-    cb       = xu2
+    variable = xNd1
+    args_a = 'xNd2 xNd3'
+    args_b = 'xAs2 xAs3'
+    cb       = xAs1
     fa_name  = F1
     fb_name  = F2
-
-
 
   [../]
   [./chempot23_1]
     type = KKSPhaseChemicalPotential
-    variable = xnd1
-    args_a = 'xu1 xu2'
-    args_b = 'xas1 xas2'
-    cb       = xnd2
+    variable = xNd2
+    args_a = 'xNd1 xNd3'
+    args_b = 'xAs1 xAs3'
+    cb       = xAs2
     fa_name  = F2
     fb_name  = F3
   [../]
+
+  [./chempot31_1]
+    type = KKSPhaseChemicalPotential
+    variable = xNd3
+    args_a = 'xNd1 xNd2'
+    args_b = 'xAs1 xAs2'
+    cb       = xAs3
+    fa_name  = F1
+    fb_name  = F3
+  [../]
+
   [./phaseconcentration_1]
     type = KKSMultiPhaseConcentration
-    variable = xas1
-    cj = 'xu1 xnd1 xas1'
+    variable = xNd2
+    cj = 'xNd1 xNd2 xNd3'
     hj_names = 'h1 h2 h3'
     etas = 'eta1 eta2 eta3'
-    c = c1
+    c = xNd
   [../]
 
 
@@ -803,33 +813,39 @@
   # Phase concentration constraints for global concentration 2.
   [./chempot12_2]
     type = KKSPhaseChemicalPotential
-    variable = xu2
-    args_a = 'xnd2 xnd1'
-    args_b = 'xas2 xas1'
-    cb       = xu1
+    variable = xAs1
+    args_a = 'xAs2 xAs3'
+    args_b = 'xNd2 xNd3'
+    cb       = xNd1
     fa_name  = F1
     fb_name  = F2
   [../]
   [./chempot23_2]
     type = KKSPhaseChemicalPotential
-    variable = xnd2
-    args_a = 'xu2 xu1'
-    args_b = 'xas2 xas1'
-    cb       = xnd1
+    variable = xAs2
+    args_a = 'xAs1 xAs3'
+    args_b = 'xNd1 xNd3'
+    cb       = xNd2
     fa_name  = F2
+    fb_name  = F3
+  [../]
+  [./chempot31_2]
+    type = KKSPhaseChemicalPotential
+    variable = xAs3
+    args_a = 'xAs1 xAs2'
+    args_b = 'xNd1 xNd2'
+    cb       = xNd3
+    fa_name  = F1
     fb_name  = F3
   [../]
   [./phaseconcentration_2]
     type = KKSMultiPhaseConcentration
-    variable = xas2
-    cj = 'xu2 xnd2 xas2'
-    hj_names = 'h1 h2 h3'
+    variable = xAs2
+    cj       = 'xAs1 xAs2 xAs3'
+    hj_names = 'h1   h2   h3'
     etas = 'eta1 eta2 eta3'
-    c = c2
+    c = xAs
   [../]
-
-
-
 []
 
 
