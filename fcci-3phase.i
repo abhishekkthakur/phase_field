@@ -5,13 +5,13 @@
 [Mesh]
   type = GeneratedMesh
   dim = 2
-  nx = 200
-  ny = 1
+  nx = 50
+  ny = 50
   nz = 0
-  xmin = -10
-  xmax = 10
-  ymin = 0
-  ymax = 1
+  xmin = -40
+  xmax = 40
+  ymin = -40
+  ymax = 40
   zmin = 0
   zmax = 0
   elem_type = QUAD4
@@ -117,8 +117,7 @@
   [../]
   [./f_eta2]
     type = ParsedFunction
-    #value = (60+x)/180
-    value = (tanh(x+5)+1-tanh(x-3)-1)/2
+    value = (tanh(x+5)+1-tanh(x-5)-1)/2
   [../]
   [./f_eta3]
     type = ParsedFunction
@@ -141,6 +140,12 @@
     #max = 0.35
     type = FunctionIC
     function = f_eta1
+    #type = SmoothCircleIC
+    #x1 = -20
+    #y1 = -20
+    #radius = 10
+    #invalue = 0.9
+    #outvalue = 0.1
   [../]
   [./eta2]
     variable = eta2
@@ -149,14 +154,26 @@
     #max = 0.35
     type = FunctionIC
     function = f_eta2
+    #type = SmoothCircleIC
+    #x1 = 20
+    #y1 = 0
+    #radius = 10
+    #invalue = 0.9
+    #outvalue = 0.1
   [../]
   [./eta3]
     variable = eta3
     #type = RandomIC
-    #min = 0.3
-    #max = 0.35
+    #min = 0.001
+    #max = 0.01
     type = FunctionIC
     function = f_eta3
+    #type = SmoothCircleIC
+    #x1 = -20
+    #y1 = 20
+    #radius = 10
+    #invalue = 0.9
+    #outvalue = 0.1
   [../]
   [./xAs]
     variable = xAs
@@ -181,17 +198,15 @@
     args = 'xAs1 xNd1'
     function = 'xU1:=1-xAs1-xNd1; xU1*-0.15608 + xNd1*0.05182 + xAs1*0.05182 + 3*xAs1*xAs1*-1.44 + 3*xNd1*xNd1*2.60 + 3*xNd1*xAs1*-3.225
                 + 8.314*300*(xU1*log(xU1) + xNd1*log(xNd1) + xAs1*log(xAs1))
-                + xU1*xNd1*4.17 + xU1*xAs1*-1.04 + xNd1*xAs1*-3.225'
+                + xU1*xNd1*4.17 + xU1*xAs1*-1.04 + xNd1*xAs1*-96.225'
   [../]
   [./f2]
     type = DerivativeParsedMaterial
     f_name = F2
-    constant_names       = 'A'
-    constant_expressions = '7'
     args = 'xAs2 xNd2'
-    function = 'xU2:=1-xAs2-xNd2; -12.572 + A *((xNd2-0.5)^2 + (xAs2-0.5)^2)
-                + xU2*xNd2*1.01 + xU2*xAs2*11.38 + xNd2*xAs2*16.65
-                + 8.314*300*(xU2*log(xU2) + xNd2*log(xNd2) + xAs2*log(xAs2))'
+    function = 'xU2:=1-xAs2-xNd2; -12.572 + 7*((xNd2-0.5)*(xNd2-0.5) + (xAs2-0.5)*(xAs2-0.5))
+                + 8.314*300*(xU2*log(xU2) + xNd2*log(xNd2) + xAs2*log(xAs2))
+                + xU2*xNd2*1.01 + xU2*xAs2*11.38 + xNd2*xAs2*16.65'
   [../]
   [./f3]
     type = DerivativeParsedMaterial
