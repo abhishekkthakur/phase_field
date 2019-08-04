@@ -126,25 +126,20 @@
   [./f1]
     type = DerivativeParsedMaterial
     f_name = F1
-    args = 'c1 c2 c3'
-    function = 'c1*-57515.479353 + c2*5000 + c3*5000 + 3*c3*c3*-1.44 + 3*c2*c2*2.6 + 3*c2*c3*-3.225
-                + 8.314*300*(c1*log(c1) + c2*log(c2) + c3*log(c3))
-                + c1*c2*4.17 + c1*c3*-1.04 + c2*c3*-3.225'
+    args = 'c1'
+    function = '20*(c1-0.2)^2'
   [../]
   [./f2]
     type = DerivativeParsedMaterial
     f_name = F2
-    args = 'c1 c2 c3'
-    function = '-12.572 + 7*((c2-0.5)*(c2-0.5) + (c3-0.5)*(c3-0.5))
-                + 0.5*8.314*300*(2*c1*log(2*c1) + (1-2*c1)*log(1-2*c1))
-                + c1*c2*0.51 + c1*c3*6.76 + c2*c3*16.65'
+    args = 'c2'
+    function = '20*(c2-0.5)^2'
   [../]
   [./f3]
     type = DerivativeParsedMaterial
     f_name = F3
-    args = 'c1 c2 c3'
-    function = 'c1*1000 + c2*5000 + c3*1000
-                + 0.42857*8.314*300*(2.33*c2*log(2.33*c2) + (1-2.33*c2)*log(1-2.33*c2))'
+    args = 'c3'
+    function = '20*(c3-0.8)^2'
   [../]
 
   # Switching functions for each phase
@@ -438,8 +433,6 @@
   [./chempot12]
     type = KKSPhaseChemicalPotential
     variable = c1
-    args_a = c2
-    args_b = c3
     cb       = c2
     fa_name  = F1
     fb_name  = F2
@@ -447,8 +440,6 @@
   [./chempot23]
     type = KKSPhaseChemicalPotential
     variable = c2
-    args_a = c1
-    args_b = c3
     cb       = c3
     fa_name  = F2
     fb_name  = F3
@@ -487,7 +478,7 @@
   nl_rel_tol = 1.0e-10
   nl_abs_tol = 1.0e-11
 
-  num_steps = 2
+  num_steps = 100
   dt = 0.5
 []
 

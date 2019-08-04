@@ -3,19 +3,24 @@ import matplotlib.pyplot as plt
 import math
 
 xvalues = []
-yvalues = []
+y1values = []
+y2values = []
+y3values = []
+x = -10
+while (x < 10.01):
+    y1 = ((math.tanh(x+5)+1)/2) + (-(math.tanh(x-3)+1)/2)
+    y2 = (-math.tanh(x+5)+1)/2
+    y3 = ((math.tanh(x-3)+1)/2)
+    xvalues.append(x)
+    y1values.append(y1)
+    y2values.append(y2)
+    y3values.append(y3)
+    x = x+0.01
 
-with open('kks_example_dirichlet_out.dat') as f:
-    lines = f.readlines()
-    for line in lines:
-        a = line.strip()
-        a = a.split('\t')
-        data1 = float(a[0])
-        data2 = float(a[2])
-        xvalues.append(data1)
-        yvalues.append(data2)
-
-plt.plot(xvalues, yvalues)
-plt.xlabel('Time')
-plt.ylabel('Gibbs energy')
+plt.plot(xvalues, y2values, label = 'Phase 1')
+plt.plot(xvalues, y1values, label = 'Phase 2')
+plt.plot(xvalues, y3values, label = 'Phase 3')
+plt.xlabel('x')
+plt.ylabel('f(x)')
+plt.legend()
 plt.show()

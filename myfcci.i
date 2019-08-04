@@ -55,42 +55,36 @@
   [./xAs1]
     order = FIRST
     family = LAGRANGE
-    #initial_condition = 0.01
     initial_condition = 0.7
   [../]
   # Local concentration of Nd in Phase 1.
   [./xNd1]
     order = FIRST
     family = LAGRANGE
-    #initial_condition = 0.01
     initial_condition = 0.1
   [../]
   # Local concentration of As in Phase 2.
   [./xAs2]
     order = FIRST
     family = LAGRANGE
-    #initial_condition = 0.1
     initial_condition = 0.8
   [../]
   # Local concentration of Nd in Phase 2.
   [./xNd2]
     order = FIRST
     family = LAGRANGE
-    #initial_condition = 0.01
     initial_condition = 0.11
   [../]
   # Local concentration of As in Phase 3.
   [./xAs3]
     order = FIRST
     family = LAGRANGE
-    #initial_condition = 0.01
     initial_condition = 0.55
   [../]
   # Local concentration of Nd in Phase 3.
   [./xNd3]
     order = FIRST
     family = LAGRANGE
-    #initial_condition = 0.01
     initial_condition = 0.11
   [../]
   # Lagrange multiplier
@@ -101,15 +95,6 @@
   [../]
 []
 
-#[BCs]
-#  [./BCxAs2]
-#    type = NeumannBC
-#    variable = xAs2
-#    boundary = 'left right top bottom'
-#    value = 0
-#  [../]
-#[]
-# Function definition block.
 [Functions]
   [./f_eta1]
     type = ParsedFunction
@@ -121,12 +106,10 @@
   [../]
   [./f_eta3]
     type = ParsedFunction
-    #value = (120+x)/180
     value = (tanh(x-3)+1)/2
   [../]
   [./f_c]
     type = ParsedFunction
-    #value = x/180
     value = (tanh(x))/2
   [../]
 []
@@ -135,59 +118,28 @@
 [ICs]
   [./eta1]
     variable = eta1
-    #type = RandomIC
-    #min = 0.3
-    #max = 0.35
     type = FunctionIC
     function = f_eta1
-    #type = SmoothCircleIC
-    #x1 = -20
-    #y1 = -20
-    #radius = 10
-    #invalue = 0.9
-    #outvalue = 0.1
   [../]
   [./eta2]
     variable = eta2
-    #type = RandomIC
-    #min = 0.3
-    #max = 0.35
     type = FunctionIC
     function = f_eta2
-    #type = SmoothCircleIC
-    #x1 = 20
-    #y1 = 0
-    #radius = 10
-    #invalue = 0.9
-    #outvalue = 0.1
   [../]
   [./eta3]
     variable = eta3
-    #type = RandomIC
-    #min = 0.001
-    #max = 0.01
     type = FunctionIC
     function = f_eta3
-    #type = SmoothCircleIC
-    #x1 = -20
-    #y1 = 20
-    #radius = 10
-    #invalue = 0.9
-    #outvalue = 0.1
   [../]
   [./xAs]
     variable = xAs
     type = RandomIC
-    #min = 0.2
-    #max = 0.21
     min = 0.4
     max = 0.45
   [../]
   [./xNd]
     variable = xNd
     type = RandomIC
-    #min = 0.2
-    #max = 0.21
     min = 0.4
     max = 0.45
   [../]
