@@ -55,36 +55,36 @@
   [./xAs1]
     order = FIRST
     family = LAGRANGE
-    #initial_condition = 0.01
-    initial_condition = 0.7
+    initial_condition = 0.02
+    #initial_condition = 0.7
   [../]
   # Local concentration of Nd in Phase 1.
   [./xNd1]
     order = FIRST
     family = LAGRANGE
-    #initial_condition = 0.01
-    initial_condition = 0.1
+    initial_condition = 0.02
+    #initial_condition = 0.1
   [../]
   # Local concentration of As in Phase 2.
   [./xAs2]
     order = FIRST
     family = LAGRANGE
-    #initial_condition = 0.1
-    initial_condition = 0.8
+    initial_condition = 0.98
+    #initial_condition = 0.8
   [../]
   # Local concentration of Nd in Phase 2.
   [./xNd2]
     order = FIRST
     family = LAGRANGE
-    #initial_condition = 0.01
-    initial_condition = 0.11
+    initial_condition = 0.98
+    #initial_condition = 0.11
   [../]
   # Local concentration of As in Phase 3.
   [./xAs3]
     order = FIRST
     family = LAGRANGE
-    #initial_condition = 0.01
-    initial_condition = 0.55
+    #initial_condition = 0.25
+    initial_condition = 0.25
   [../]
   # Local concentration of Nd in Phase 3.
   [./xNd3]
@@ -123,6 +123,7 @@
     type = ParsedFunction
     #value = (120+x)/180
     value = (tanh(x-3)+1)/2
+    #value = 0*x
   [../]
   [./f_c]
     type = ParsedFunction
@@ -180,16 +181,16 @@
     type = RandomIC
     #min = 0.2
     #max = 0.21
-    min = 0.4
-    max = 0.45
+    min = 0.5
+    max = 0.51
   [../]
   [./xNd]
     variable = xNd
     type = RandomIC
     #min = 0.2
     #max = 0.21
-    min = 0.4
-    max = 0.45
+    min = 0.5
+    max = 0.51
   [../]
 []
 
@@ -200,26 +201,32 @@
     type = DerivativeParsedMaterial
     f_name = F1
     args = 'xAs1 xNd1'
-    function = 'xU1:=1-xAs1-xNd1; xU1*-0.15608 + xNd1*0.05182 + xAs1*0.05182 + 3*xAs1*xAs1*-1.44 + 3*xNd1*xNd1*2.60 + 3*xNd1*xAs1*-3.225
-                + 8.314*300*(xU1*log(xU1) + xNd1*log(xNd1) + xAs1*log(xAs1))
-                + xU1*xNd1*4.17 + xU1*xAs1*-1.04 + xNd1*xAs1*-3.225'
+    constant_names = 'dEAsAs_p1 dENdNd_p1 dENdAs_p1 L0UNd_p1 L0NdAs_p1 L0UAs_p1'
+    constant_expressions = '-1.44 2.60 -3.225 4.17 -3.225 -1.04'
+    function = 'xU1:=1-xAs1-xNd1; xU1*-0.15608 + xNd1*0.05182 + xAs1*0.05182 + 3*xNd1*xNd1*dENdNd_p1
+                + 8.617e-05*300*(xU1*log(xU1) + xNd1*log(xNd1) + xAs1*log(xAs1))
+                + xU1*xNd1*L0UNd_p1'
   [../]
   [./f2]
     type = DerivativeParsedMaterial
     f_name = F2
     args = 'xAs2 xNd2'
-    function = 'xU2:=1-xAs2-xNd2; -12.572 + 400*((xNd2-0.5)*(xNd2-0.5) + (xAs2-0.5)*(xAs2-0.5))
-                + xU2*xNd2*1.01 + xU2*xAs2*11.38 + xNd2*xAs2*16.65'
-                #+ 8.314*300*(xU2*log(xU2) + xNd2*log(xNd2) + xAs2*log(xAs2))
+    constant_names = 'dENdAs factor1 L0UNd_p2 L0UAs_p2 L0NdAs_p2'
+    constant_expressions = '-1.57 200 1.01 11.38 16.65'
+    function = 'xU2:=1-xAs2-xNd2; dENdAs + factor1*((xNd2-0.5)*(xNd2-0.5) + (xAs2-0.5)*(xAs2-0.5))
+                + 0
+                + 0'
 
   [../]
   [./f3]
     type = DerivativeParsedMaterial
     f_name = F3
     args = 'xAs3 xNd3'
-    function = 'xU3:=1-xAs3-xNd3; xU3*-0.08724 + xNd3*-0.23777 + xAs3*-0.23205
-                + 8.314*300*(xU3*log(xU3) + xNd3*log(xNd3) + xAs3*log(xAs3))
-                + xU3*xNd3*-1.46 + xNd3*xAs3*3.6 + xU3*xAs3*3.52'
+    constant_names = 'factor2 L0UNd_p3 L0NdAs_p3 L0UAs_p3'
+    constant_expressions = '100 -1.46 3.60 3.52'
+    function = 'xU3:=1-xAs3-xNd3; -1.03 + factor2*((0.5-xNd3-xAs3)*(0.5-xNd3-xAs3) + (xAs3-0.5)*(xAs3-0.5))
+                + 8.617e-05*300*(xU3*log(xU3) + xNd3*log(xNd3) + xAs3*log(xAs3))
+                + xU3*xNd3*L0UNd_p3 + xNd3*xAs3*L0NdAs_p3 + xU3*xAs3*L0UAs_p3'
   [../]
 
   # Switching functions for each phase
@@ -705,7 +712,7 @@
   nl_rel_tol = 1.0e-9
   nl_abs_tol = 1.0e-9
 
-  end_time = 1e3
+  end_time = 1e7
 
   [./TimeStepper]
     type = IterationAdaptiveDT

@@ -152,16 +152,20 @@
     type = DerivativeParsedMaterial
     f_name = F1
     args = 'xAs1 xNd1'
-    function = 'xU1:=1-xAs1-xNd1; xU1*-0.15608 + xNd1*0.05182 + xAs1*0.05182 + 3*xAs1*xAs1*-1.44 + 3*xNd1*xNd1*2.60 + 3*xNd1*xAs1*-3.225
+    constant_names = 'dEAsAs_p1 dENdNd_p1 dENdAs_p1 L0UNd_p1 L0NdAs_p1 L0UAs_p1'
+    constant_expressions = '-1.44 2.60 -3.225 4.17 -3.225 -1.04'
+    function = 'xU1:=1-xAs1-xNd1; xU1*-0.15608 + xNd1*0.05182 + xAs1*0.05182 + 3*xAs1*xAs1*dEAsAs_p1 + 3*xNd1*xNd1*dENdNd_p1 + 3*xNd1*xAs1*dENdAs_p1
                 + 8.314*300*(xU1*log(xU1) + xNd1*log(xNd1) + xAs1*log(xAs1))
-                + xU1*xNd1*4.17 + xU1*xAs1*-1.04 + xNd1*xAs1*-3.225'
+                + xU1*xNd1*L0UNd_p1 + xU1*xAs1*L0UAs_p1 + xNd1*xAs1*L0NdAs_p1'
   [../]
   [./f2]
     type = DerivativeParsedMaterial
     f_name = F2
     args = 'xAs2 xNd2'
-    function = 'xU2:=1-xAs2-xNd2; -12.572 + 400*((xNd2-0.5)*(xNd2-0.5) + (xAs2-0.5)*(xAs2-0.5))
-                + xU2*xNd2*1.01 + xU2*xAs2*11.38 + xNd2*xAs2*16.65'
+    constant_names = 'factor L0UNd_p2 L0UAs_p2 L0NdAs_p2'
+    constant_expressions = '200 1.01 11.38 16.65'
+    function = 'xU2:=1-xAs2-xNd2; -12.572 + factor*((xNd2-0.5)*(xNd2-0.5) + (xAs2-0.5)*(xAs2-0.5))
+                + xU2*xNd2*L0UNd_p2 + xU2*xAs2*L0UAs_p2 + xNd2*xAs2*L0NdAs_p2'
                 #+ 8.314*300*(xU2*log(xU2) + xNd2*log(xNd2) + xAs2*log(xAs2))
 
   [../]
@@ -169,9 +173,11 @@
     type = DerivativeParsedMaterial
     f_name = F3
     args = 'xAs3 xNd3'
+    constant_names = 'L0UNd_p3 L0NdAs_p3 L0UAs_p3'
+    constant_expressions = '-1.46 3.60 3.52'
     function = 'xU3:=1-xAs3-xNd3; xU3*-0.08724 + xNd3*-0.23777 + xAs3*-0.23205
                 + 8.314*300*(xU3*log(xU3) + xNd3*log(xNd3) + xAs3*log(xAs3))
-                + xU3*xNd3*-1.46 + xNd3*xAs3*3.6 + xU3*xAs3*3.52'
+                + xU3*xNd3*L0UNd_p3 + xNd3*xAs3*L0NdAs_p3 + xU3*xAs3*L0UAs_p3'
   [../]
 
   # Switching functions for each phase
@@ -570,8 +576,8 @@
     type = KKSPhaseChemicalPotential
     variable = xAs1
     cb       = xAs2
-    args_a = 'xNd1'
-    args_b = 'xNd2'
+    args_a = 'xNd2'
+    args_b = 'xNd1'
     fa_name  = F1
     fb_name  = F2
   [../]
@@ -580,8 +586,8 @@
     type = KKSPhaseChemicalPotential
     variable = xAs2
     cb       = xAs3
-    args_a = 'xNd2'
-    args_b = 'xNd3'
+    args_a = 'xNd3'
+    args_b = 'xNd2'
     fa_name  = F2
     fb_name  = F3
   [../]
@@ -601,8 +607,8 @@
     type = KKSPhaseChemicalPotential
     variable = xNd1
     cb       = xNd2
-    args_a = 'xAs1'
-    args_b = 'xAs2'
+    args_a = 'xAs2'
+    args_b = 'xAs1'
     fa_name  = F1
     fb_name  = F2
   [../]
@@ -611,8 +617,8 @@
     type = KKSPhaseChemicalPotential
     variable = xNd2
     cb       = xNd3
-    args_a = 'xAs2'
-    args_b = 'xAs3'
+    args_a = 'xAs3'
+    args_b = 'xAs2'
     fa_name  = F2
     fb_name  = F3
   [../]
@@ -626,12 +632,6 @@
     c = xNd
   [../]
 []
-
-
-
-
-
-
 
 [AuxKernels]
   [./Energy_total]
