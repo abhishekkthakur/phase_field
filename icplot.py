@@ -18,8 +18,10 @@ while (x < 10.01):
     y3values.append(y3)
     x = x + 0.01
 
-plt.plot(xvalues, y1values, label = 'Phase 1')
+plt.plot(xvalues, y1values, label = r'$\alpha-{U}$')
 #plt.plot(xvalues, y2values, label = 'Phase 2')
-plt.plot(xvalues, y3values, label = 'Phase 3')
+plt.plot(xvalues, y3values, label = r'$UAs$')
+plt.xlabel('Distance')
+plt.ylabel('Phase')
 plt.legend()
 plt.show()

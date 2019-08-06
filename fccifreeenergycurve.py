@@ -19,7 +19,7 @@ Gp3_values = []
 factor1 = 200
 factor2 = 100
 a = 0.0001
-while (a < 0.989):
+while (a < 0.998):
     x = 0.001
     y = a
 
@@ -61,6 +61,7 @@ while (a < 0.989):
 
     a = a + 0.00001
 
+'''
 fig = plt.figure()
 
 plt.subplot(3, 3, 1)
@@ -120,7 +121,12 @@ plt.ylabel('Gibbs free energy (eV)')
 plt.legend()
 '''
 
-plt.plot(xvalues, gid_p1_values)
-'''
-plt.ylim(-5, 15)
+plt.plot(xvalues, Gp1_values, label = r'$\alpha-{U}$')
+plt.plot(xvalues, Gp2_values, ls = '--', label = r'$NdAs$')
+plt.plot(xvalues, Gp3_values, ls = ':', label = r'$UAs$')
+plt.xlabel(r'$Composition (X_{As})$')
+plt.ylabel(r'Gibbs free energy $(eV)$')
+plt.legend()
+
+#plt.ylim(-5, 15)
 plt.show()

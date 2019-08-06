@@ -8,8 +8,8 @@
   nx = 200
   ny = 1
   nz = 0
-  xmin = -10
-  xmax = 10
+  xmin = -20
+  xmax = 20
   ymin = 0
   ymax = 1
   zmin = 0
@@ -117,21 +117,21 @@
 
 # Initial condition block. This is very important.
 [ICs]
-  [./eta1]
-    variable = eta1
-    type = FunctionIC
-    function = f_eta1
-  [../]
+  #[./eta1]
+  #  variable = eta1
+  #  type = FunctionIC
+  #  function = f_eta1
+  #[../]
   [./eta2]
     variable = eta2
     type = FunctionIC
     function = f_eta2
   [../]
-  #[./eta3]
-  #  variable = eta3
-  #  type = FunctionIC
-  #  function = f_eta3
-  #[../]
+  [./eta3]
+    variable = eta3
+    type = FunctionIC
+    function = f_eta1
+  [../]
   [./xAs]
     variable = xAs
     type = RandomIC
@@ -166,8 +166,8 @@
     constant_names = 'factor L0UNd_p2 L0UAs_p2 L0NdAs_p2'
     constant_expressions = '200 1.01 11.38 16.65'
     function = 'xU2:=1-xAs2-xNd2; -12.572 + factor*((xNd2-0.5)*(xNd2-0.5) + (xAs2-0.5)*(xAs2-0.5))
-                + xU2*xNd2*L0UNd_p2 + xU2*xAs2*L0UAs_p2 + xNd2*xAs2*L0NdAs_p2'
-                #+ 8.314*300*(xU2*log(xU2) + xNd2*log(xNd2) + xAs2*log(xAs2))
+                + xU2*xNd2*L0UNd_p2 + xU2*xAs2*L0UAs_p2 + xNd2*xAs2*L0NdAs_p2
+                + 8.314*300*(xU2*log(xU2) + xNd2*log(xNd2) + xAs2*log(xAs2))'
 
   [../]
   [./f3]
