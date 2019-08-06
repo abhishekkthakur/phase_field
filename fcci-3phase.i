@@ -55,14 +55,14 @@
   [./xAs1]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.1
+    initial_condition = 0.43
     #initial_condition = 0.7
   [../]
   # Local concentration of Nd in Phase 1.
   [./xNd1]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.15
+    initial_condition = 0.001
     #initial_condition = 0.1
   [../]
   # Local concentration of As in Phase 2.
@@ -91,7 +91,7 @@
     order = FIRST
     family = LAGRANGE
     #initial_condition = 0.01
-    initial_condition = 0.45
+    initial_condition = 0.002
   [../]
   # Lagrange multiplier
   [./lambda]
@@ -181,16 +181,16 @@
     type = RandomIC
     #min = 0.2
     #max = 0.21
-    min = 0.4
-    max = 0.45
+    min = 0.45
+    max = 0.5
   [../]
   [./xNd]
     variable = xNd
     type = RandomIC
     #min = 0.2
     #max = 0.21
-    min = 0.4
-    max = 0.45
+    min = 0.01
+    max = 0.05
   [../]
 []
 
