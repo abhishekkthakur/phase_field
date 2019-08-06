@@ -98,15 +98,16 @@
 [Functions]
   [./f_eta1]
     type = ParsedFunction
-    value = (-tanh(x+5)+1)/2
+    value = (-tanh(x)+1)/2
   [../]
   [./f_eta2]
     type = ParsedFunction
-    value = (tanh(x+5)+1-tanh(x-5)-1)/2
+    value = (tanh(x)+1)/2
   [../]
   [./f_eta3]
     type = ParsedFunction
-    value = (tanh(x-3)+1)/2
+    #value = (tanh(x-3)+1)/2
+    value = 0*x
   [../]
   [./f_c]
     type = ParsedFunction
@@ -126,11 +127,11 @@
     type = FunctionIC
     function = f_eta2
   [../]
-  [./eta3]
-    variable = eta3
-    type = FunctionIC
-    function = f_eta3
-  [../]
+  #[./eta3]
+  #  variable = eta3
+  #  type = FunctionIC
+  #  function = f_eta3
+  #[../]
   [./xAs]
     variable = xAs
     type = RandomIC

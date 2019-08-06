@@ -19,8 +19,8 @@ Gp3_values = []
 factor1 = 200
 factor2 = 100
 a = 0.0001
-while (a < 0.5):
-    x = a
+while (a < 0.989):
+    x = 0.001
     y = a
 
     # This is the mechanical mixing part of phase 1 and phase 2

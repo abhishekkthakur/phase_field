@@ -55,28 +55,28 @@
   [./xAs1]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.02
+    initial_condition = 0.15
     #initial_condition = 0.7
   [../]
   # Local concentration of Nd in Phase 1.
   [./xNd1]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.02
+    initial_condition = 0.15
     #initial_condition = 0.1
   [../]
   # Local concentration of As in Phase 2.
   [./xAs2]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.98
+    initial_condition = 0.3
     #initial_condition = 0.8
   [../]
   # Local concentration of Nd in Phase 2.
   [./xNd2]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.98
+    initial_condition = 0.3
     #initial_condition = 0.11
   [../]
   # Local concentration of As in Phase 3.
@@ -84,14 +84,14 @@
     order = FIRST
     family = LAGRANGE
     #initial_condition = 0.25
-    initial_condition = 0.25
+    initial_condition = 0.15
   [../]
   # Local concentration of Nd in Phase 3.
   [./xNd3]
     order = FIRST
     family = LAGRANGE
     #initial_condition = 0.01
-    initial_condition = 0.11
+    initial_condition = 0.15
   [../]
   # Lagrange multiplier
   [./lambda]
@@ -113,17 +113,17 @@
 [Functions]
   [./f_eta1]
     type = ParsedFunction
-    value = (-tanh(x+5)+1)/2
+    #value = (-tanh(x+5)+1)/2
+    value = (-tanh(x)+1)/2
   [../]
   [./f_eta2]
     type = ParsedFunction
-    value = (tanh(x+5)+1-tanh(x-5)-1)/2
+    #value = (tanh(x+5)+1-tanh(x-5)-1)/2
+    value = (tanh(x)+1)/2
   [../]
   [./f_eta3]
     type = ParsedFunction
-    #value = (120+x)/180
     value = (tanh(x-3)+1)/2
-    #value = 0*x
   [../]
   [./f_c]
     type = ParsedFunction
@@ -162,35 +162,35 @@
     #invalue = 0.9
     #outvalue = 0.1
   [../]
-  [./eta3]
-    variable = eta3
+  #[./eta3]
+  #  variable = eta3
     #type = RandomIC
     #min = 0.001
     #max = 0.01
-    type = FunctionIC
-    function = f_eta3
+  #  type = FunctionIC
+  #  function = f_eta3
     #type = SmoothCircleIC
     #x1 = -20
     #y1 = 20
     #radius = 10
     #invalue = 0.9
     #outvalue = 0.1
-  [../]
+  #[../]
   [./xAs]
     variable = xAs
     type = RandomIC
     #min = 0.2
     #max = 0.21
-    min = 0.5
-    max = 0.51
+    min = 0.4
+    max = 0.45
   [../]
   [./xNd]
     variable = xNd
     type = RandomIC
     #min = 0.2
     #max = 0.21
-    min = 0.5
-    max = 0.51
+    min = 0.1
+    max = 0.15
   [../]
 []
 
