@@ -20,7 +20,7 @@ while (x < 10.01):
 
 plt.plot(xvalues, y1values, label = r'$\alpha-{U}$')
 #plt.plot(xvalues, y2values, label = 'Phase 2')
-plt.plot(xvalues, y3values, label = r'$UAs$')
+plt.plot(xvalues, y3values, label = r'$NdAs$')
 plt.xlabel('Distance')
 plt.ylabel('Phase')
 plt.legend()

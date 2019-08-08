@@ -1,3 +1,5 @@
+# This is for phase 1 and phase 2 equilibrium.
+
 # This file is for KKS model implemented for 3 phase, 2 global concentration and 9 local
 # concentrations. We have used 6 local concentrations as 3 are defined implicitly.
 
@@ -55,43 +57,47 @@
   [./xAs1]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.43
+    initial_condition = 0.005
     #initial_condition = 0.7
   [../]
   # Local concentration of Nd in Phase 1.
   [./xNd1]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.001
+    initial_condition = 0.005
     #initial_condition = 0.1
   [../]
   # Local concentration of As in Phase 2.
   [./xAs2]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.001
-    #initial_condition = 0.8
+    [./InitialCondition]
+      type = FunctionIC
+      function = f_c
+    [../]
   [../]
   # Local concentration of Nd in Phase 2.
   [./xNd2]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.001
-    #initial_condition = 0.11
+    [./InitialCondition]
+      type = FunctionIC
+      function = f_c
+    [../]
   [../]
   # Local concentration of As in Phase 3.
   [./xAs3]
     order = FIRST
     family = LAGRANGE
     #initial_condition = 0.25
-    initial_condition = 0.35
+    initial_condition = 0.0
   [../]
   # Local concentration of Nd in Phase 3.
   [./xNd3]
     order = FIRST
     family = LAGRANGE
     #initial_condition = 0.01
-    initial_condition = 0.002
+    initial_condition = 0.0
   [../]
   # Lagrange multiplier
   [./lambda]
@@ -128,7 +134,7 @@
   [./f_c]
     type = ParsedFunction
     #value = x/180
-    value = (tanh(x))/2
+    value = (1+tanh(x))/2*0.49+0.005
   [../]
 []
 
@@ -136,61 +142,23 @@
 [ICs]
   [./eta1]
     variable = eta1
-    #type = RandomIC
-    #min = 0.3
-    #max = 0.35
     type = FunctionIC
     function = f_eta1
-    #type = SmoothCircleIC
-    #x1 = -20
-    #y1 = -20
-    #radius = 10
-    #invalue = 0.9
-    #outvalue = 0.1
   [../]
   [./eta2]
     variable = eta2
-    #type = RandomIC
-    #min = 0.3
-    #max = 0.35
     type = FunctionIC
     function = f_eta2
-    #type = SmoothCircleIC
-    #x1 = 20
-    #y1 = 0
-    #radius = 10
-    #invalue = 0.9
-    #outvalue = 0.1
   [../]
-  #[./eta3]
-  #  variable = eta3
-    #type = RandomIC
-    #min = 0.001
-    #max = 0.01
-  #  type = FunctionIC
-  #  function = f_eta3
-    #type = SmoothCircleIC
-    #x1 = -20
-    #y1 = 20
-    #radius = 10
-    #invalue = 0.9
-    #outvalue = 0.1
-  #[../]
   [./xAs]
     variable = xAs
-    type = RandomIC
-    #min = 0.2
-    #max = 0.21
-    min = 0.45
-    max = 0.5
+    type = FunctionIC
+    function = f_c
   [../]
   [./xNd]
     variable = xNd
-    type = RandomIC
-    #min = 0.2
-    #max = 0.21
-    min = 0.01
-    max = 0.05
+    type = FunctionIC
+    function = f_c
   [../]
 []
 
@@ -201,10 +169,11 @@
     type = DerivativeParsedMaterial
     f_name = F1
     args = 'xAs1 xNd1'
+
     constant_names = 'dEAsAs_p1 dENdNd_p1 dENdAs_p1 L0UNd_p1 L0NdAs_p1 L0UAs_p1'
     constant_expressions = '-1.44 2.60 -3.225 4.17 -3.225 -1.04'
     function = 'xU1:=1-xAs1-xNd1; xU1*-0.15608 + xNd1*0.05182 + xAs1*0.05182 + 3*xNd1*xNd1*dENdNd_p1
-                + 8.617e-05*300*(xU1*log(xU1) + xNd1*log(xNd1) + xAs1*log(xAs1))
+                + 8.617e-05*300*(xU1*plog(xU1,0.01) + xNd1*plog(xNd1,0.01) + xAs1*plog(xAs1,0.01))
                 + xU1*xNd1*L0UNd_p1'
   [../]
   [./f2]
@@ -213,7 +182,7 @@
     args = 'xAs2 xNd2'
     constant_names = 'dENdAs factor1 L0UNd_p2 L0UAs_p2 L0NdAs_p2'
     constant_expressions = '-1.57 200 1.01 11.38 16.65'
-    function = 'xU2:=1-xAs2-xNd2; dENdAs + factor1*((xNd2-0.5)*(xNd2-0.5) + (xAs2-0.5)*(xAs2-0.5))
+    function = 'xU2:=1-xAs2-xNd2; 0.5*-0.21585 + 0.5*-0.263903 + dENdAs + factor1*((xNd2-0.5)*(xNd2-0.5) + (xAs2-0.5)*(xAs2-0.5))
                 + 0
                 + 0'
 
@@ -225,8 +194,8 @@
     constant_names = 'factor2 L0UNd_p3 L0NdAs_p3 L0UAs_p3'
     constant_expressions = '100 -1.46 3.60 3.52'
     function = 'xU3:=1-xAs3-xNd3; -1.03 + factor2*((0.5-xNd3-xAs3)*(0.5-xNd3-xAs3) + (xAs3-0.5)*(xAs3-0.5))
-                + 8.617e-05*300*(xU3*log(xU3) + xNd3*log(xNd3) + xAs3*log(xAs3))
-                + xU3*xNd3*L0UNd_p3 + xNd3*xAs3*L0NdAs_p3 + xU3*xAs3*L0UAs_p3'
+                + 0
+                + 0'
   [../]
 
   # Switching functions for each phase
@@ -302,7 +271,7 @@
   [./constants]
     type = GenericConstantMaterial
     prop_names  = 'L   kappa  D'
-    prop_values = '0.7 1.0    1'
+    prop_values = '0.7 1      1'
   [../]
 []
 
@@ -318,7 +287,7 @@
     type = MatDiffusion
     variable = xNd
     #diffusivity = Dh1
-    D_name = Dh1
+    diffusivity = Dh1
     args = 'eta1 eta2 eta3'
     #v = xNd1
   [../]
@@ -326,7 +295,7 @@
     type = MatDiffusion
     variable = xNd
     #diffusivity = Dh2
-    D_name = Dh2
+    diffusivity = Dh2
     #v = xNd2
     args = 'eta1 eta2 eta3'
   [../]
@@ -334,7 +303,7 @@
     type = MatDiffusion
     variable = xNd
     #diffusivity = Dh3
-    D_name = Dh3
+    diffusivity = Dh3
     #v = xNd3
     args = 'eta1 eta2 eta3'
   [../]
@@ -349,7 +318,7 @@
     type = MatDiffusion
     variable = xAs
     #diffusivity = Dh1
-    D_name = Dh1
+    diffusivity = Dh1
     #v = xAs1
     args = 'eta1 eta2 eta3'
   [../]
@@ -357,7 +326,7 @@
     type = MatDiffusion
     variable = xAs
     #diffusivity = Dh2
-    D_name = Dh2
+    diffusivity = Dh2
     #v = xAs2
     args = 'eta1 eta2 eta3'
   [../]
@@ -365,7 +334,7 @@
     type = MatDiffusion
     variable = xAs
     #diffusivity = Dh3
-    D_name = Dh3
+    diffusivity = Dh3
     #v = xAs3
     args = 'eta1 eta2 eta3'
   [../]
@@ -382,7 +351,7 @@
     hj_names  = 'h1 h2 h3'
     gi_name   = g1
     eta_i     = eta1
-    wi        = 1.0
+    wi        = 40
     args      = 'xNd1 xNd2 xNd3 xAs1 xAs2 xAs3 eta2 eta3'
   [../]
   [./ACBulkC1_1]
@@ -430,7 +399,7 @@
     hj_names  = 'h1 h2 h3'
     gi_name   = g2
     eta_i     = eta2
-    wi        = 1.0
+    wi        = 40
     args      = 'xNd1 xNd2 xNd3 xAs1 xAs2 xAs3 eta1 eta3'
   [../]
   [./ACBulkC2_1]
@@ -479,7 +448,7 @@
     hj_names  = 'h1 h2 h3'
     gi_name   = g1
     eta_i     = eta1
-    wi        = 1.0
+    wi        = 40
     mob_name  = 1
     args      = 'xNd1 xNd2 xNd3 xAs1 xAs2 xAs3 eta2 eta3'
   [../]
@@ -519,7 +488,7 @@
     hj_names  = 'h1 h2 h3'
     gi_name   = g2
     eta_i     = eta2
-    wi        = 1.0
+    wi        = 40
     mob_name  = 1
     args      = 'xNd1 xNd2 xNd3 xAs1 xAs2 xAs3 eta1 eta3'
   [../]
@@ -559,7 +528,7 @@
     hj_names  = 'h1 h2 h3'
     gi_name   = g3
     eta_i     = eta3
-    wi        = 1.0
+    wi        = 40
     mob_name  = 1
     args      = 'xNd1 xNd2 xNd3 xAs1 xAs2 xAs3 eta1 eta2'
   [../]
@@ -683,11 +652,6 @@
 []
 
 
-
-
-
-
-
 [AuxKernels]
   [./Energy_total]
     type = KKSMultiFreeEnergy
@@ -695,7 +659,7 @@
     hj_names = 'h1 h2 h3'
     gj_names = 'g1 g2 g3'
     variable = Energy
-    w = 1
+    w = 40
     interfacial_vars =  'eta1  eta2  eta3'
     kappa_names =       'kappa kappa kappa'
   [../]
@@ -703,16 +667,17 @@
 
 [Executioner]
   type = Transient
-  solve_type = 'PJFNK'
-  petsc_options_iname = '-pc_type -sub_pc_type   -sub_pc_factor_shift_type'
-  petsc_options_value = 'asm       ilu            nonzero'
+  solve_type = NEWTON #'PJFNK'
+  # petsc_options_iname = '-pc_type -sub_pc_type   -sub_pc_factor_shift_type'
+  # petsc_options_value = 'asm       ilu            nonzero'
+  petsc_options_iname = '-pc_type  -pc_factor_shift_type'
+  petsc_options_value = 'lu        nonzero'
   l_max_its = 100
-  nl_max_its = 15
-  l_tol = 1.0e-4
+  nl_max_its = 150
+  l_tol = 1.0e-8
   nl_rel_tol = 1.0e-9
   nl_abs_tol = 1.0e-9
-
-  end_time = 1e7
+  end_time = 1e10
 
   [./TimeStepper]
     type = IterationAdaptiveDT
@@ -742,5 +707,5 @@
 
 [Outputs]
   exodus = true
-  print_linear_residuals = false
+  print_linear_residuals = true
 []

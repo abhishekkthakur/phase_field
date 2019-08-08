@@ -5,11 +5,11 @@
 [Mesh]
   type = GeneratedMesh
   dim = 2
-  nx = 200
+  nx = 400
   ny = 1
   nz = 0
-  xmin = -20
-  xmax = 20
+  xmin = -10
+  xmax = 10
   ymin = 0
   ymax = 1
   zmin = 0
