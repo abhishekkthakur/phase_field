@@ -5,17 +5,16 @@
 [Mesh]
   type = GeneratedMesh
   dim = 2
-  nx = 150
-  ny = 150
+  elem_type = QUAD4
+  nx = 200
+  ny = 1
   nz = 0
-  xmin = -25
-  xmax = 25
-  ymin = -25
-  ymax = 25
+  xmin = -10
+  xmax = 10
+  ymin = 0
+  ymax = 1
   zmin = 0
   zmax = 0
-  elem_type = QUAD4
-  #uniform_refine = 2
 []
 
 [AuxVariables]
@@ -30,9 +29,10 @@
   [./eta]
     order = FIRST
     family = LAGRANGE
+
   [../]
 
-  # solute concentration
+  # hydrogen concentration
   [./c]
     order = FIRST
     family = LAGRANGE
@@ -44,24 +44,22 @@
     family = LAGRANGE
   [../]
 
-  # Liquid phase solute concentration
-  [./cl]
+  # Phase 1 solute concentration
+  [./x1]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.1
   [../]
-  # Solid phase solute concentration
-  [./cs]
+  # Phase 2 solute concentration
+  [./x2]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.9
   [../]
 []
 
 [Functions]
   [./ic_func_eta]
     type = ParsedFunction
-    value = '0.5*(1.0-tanh((x)/sqrt(2.0)))'
+    value = 0.5*(1.0-tanh((x)/sqrt(2.0)))
   [../]
   [./ic_func_c]
     type = ParsedFunction
@@ -69,35 +67,42 @@
   [../]
 []
 
-
 [ICs]
   [./eta]
     variable = eta
-    type = RandomIC
-    #function = ic_func_eta
+    type = FunctionIC
+    function = ic_func_eta
   [../]
   [./c]
     variable = c
-    type = RandomIC
-    #function = ic_func_c
+    type = FunctionIC
+    function = ic_func_c
   [../]
 []
 
 [Materials]
-  # Free energy of the liquid
-  [./fl]
+  # Free energy of Phase 1
+  [./F1]
     type = DerivativeParsedMaterial
-    f_name = fl
-    args = 'cl'
-    function = '0.0000260486*cl^2+0.0000239298*cl-0.000178164'
+    f_name = F1
+    args = 'x1'
+    constant_names = 'dEAsAs_p1 dENdNd_p1 dENdAs_p1 L0UNd_p1 L0NdAs_p1 L0UAs_p1'
+    constant_expressions = '-1.44 2.60 -3.225 4.17 -3.225 -1.04'
+    function = 'xU1:=1-x1-x1; xU1*-0.15608 + x1*0.05182 + x1*0.05182 + 3*x1*x1*dENdNd_p1
+                + 8.617e-05*300*(xU1*plog(xU1,0.01) + x1*plog(x1,0.01) + x1*plog(x1,0.01))
+                + xU1*x1*L0UNd_p1'
   [../]
 
-  # Free energy of the solid
-  [./fs]
+  # Free energy of Phase 2
+  [./F2]
     type = DerivativeParsedMaterial
-    f_name = fs
-    args = 'cs'
-    function = '0.000196227*cs^2-0.000365148*cs+0.0000162483'
+    f_name = F2
+    args = 'x2'
+    constant_names = 'dENdAs factor1 L0UNd_p2 L0UAs_p2 L0NdAs_p2'
+    constant_expressions = '-1.57 200 1.01 11.38 16.65'
+    function = 'xU2:=1-x2-x2; 0.5*-0.21585 + 0.5*-0.263903 + dENdAs + factor1*((x2-0.5)*(x2-0.5) + (x2-0.5)*(x2-0.5))
+                + 0
+                + 0'
   [../]
 
   # h(eta)
@@ -123,13 +128,11 @@
 []
 
 [Kernels]
-  active = 'PhaseConc ChemPotSolute CHBulk ACBulkF ACBulkC ACInterface dcdt detadt ckernel'
-
   # enforce c = (1-h(eta))*cl + h(eta)*cs
   [./PhaseConc]
     type = KKSPhaseConcentration
-    ca       = cl
-    variable = cs
+    ca       = x1
+    variable = x2
     c        = c
     eta      = eta
   [../]
@@ -137,10 +140,10 @@
   # enforce pointwise equality of chemical potentials
   [./ChemPotSolute]
     type = KKSPhaseChemicalPotential
-    variable = cl
-    cb       = cs
-    fa_name  = fl
-    fb_name  = fs
+    variable = x1
+    cb       = x2
+    fa_name  = F1
+    fb_name  = F2
   [../]
 
   #
@@ -149,10 +152,10 @@
   [./CHBulk]
     type = KKSSplitCHCRes
     variable = c
-    ca       = cl
-    cb       = cs
-    fa_name  = fl
-    fb_name  = fs
+    ca       = x1
+    cb       = x2
+    fa_name  = F1
+    fb_name  = F2
     w        = w
   [../]
 
@@ -173,18 +176,18 @@
   [./ACBulkF]
     type = KKSACBulkF
     variable = eta
-    fa_name  = fl
-    fb_name  = fs
-    w        = 1.0
-    args = 'cl cs'
+    fa_name  = F1
+    fb_name  = F2
+    w        = 0.3
+    args = 'x1 x2'
   [../]
   [./ACBulkC]
     type = KKSACBulkC
     variable = eta
-    ca       = cl
-    cb       = cs
-    fa_name  = fl
-    fb_name  = fs
+    ca       = x1
+    cb       = x2
+    fa_name  = F1
+    fb_name  = F2
   [../]
   [./ACInterface]
     type = ACInterface
@@ -201,49 +204,53 @@
   [./GlobalFreeEnergy]
     variable = Fglobal
     type = KKSGlobalFreeEnergy
-    fa_name = fl
-    fb_name = fs
-    w = 1.0
+    fa_name = F1
+    fb_name = F2
+    w = 0.3
   [../]
 []
 
 [Executioner]
   type = Transient
-  solve_type = 'PJFNK'
-
-  petsc_options_iname = '-pc_type -sub_pc_type -sub_pc_factor_shift_type'
-  petsc_options_value = 'asm      ilu          nonzero'
-
+  solve_type = NEWTON #'PJFNK'
+  # petsc_options_iname = '-pc_type -sub_pc_type   -sub_pc_factor_shift_type'
+  # petsc_options_value = 'asm       ilu            nonzero'
+  petsc_options_iname = '-pc_type  -pc_factor_shift_type'
+  petsc_options_value = 'lu        nonzero'
   l_max_its = 100
-  nl_max_its = 100
+  nl_max_its = 150
+  l_tol = 1.0e-8
+  nl_rel_tol = 1.0e-9
+  nl_abs_tol = 1.0e-9
+  end_time = 1e10
 
-  num_steps = 1000
-  dt = 10
+  [./TimeStepper]
+    type = IterationAdaptiveDT
+    optimal_iterations = 8
+    iteration_window = 2
+    growth_factor = 1.5
+    dt = 1e-5
+  [../]
+  [./Predictor]
+    type = SimplePredictor
+    scale = 0.5
+  [../]
+
 []
 
-#
-# Precondition using handcoded off-diagonal terms
-#
 [Preconditioning]
+  active = 'full'
   [./full]
     type = SMP
     full = true
   [../]
-[]
-
-[Postprocessors]
-  [./dofs]
-    type = NumDOFs
-  [../]
-  [./integral]
-    type = ElementL2Error
-    variable = eta
-    function = ic_func_eta
+  [./mydebug]
+    type = FDP
+    full = true
   [../]
 []
 
 [Outputs]
   exodus = true
-  console = true
-  gnuplot = true
+  print_linear_residuals = true
 []

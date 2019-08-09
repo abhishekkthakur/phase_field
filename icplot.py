@@ -9,9 +9,9 @@ y3values = []
 x = -10
 
 while (x < 10.01):
-    y1 = (-math.tanh(x)+1)/2
+    y1 = (-math.tanh(4*x)+1)/2
     y2 = ((math.tanh(x+5)+1)/2) + (-(math.tanh(x-3)+1)/2)
-    y3 = (math.tanh(x)+1)/2
+    y3 = (math.tanh(4*x)+1)/2
     xvalues.append(x)
     y1values.append(y1)
     y2values.append(y2)

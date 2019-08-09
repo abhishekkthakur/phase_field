@@ -5,13 +5,13 @@
 [Mesh]
   type = GeneratedMesh
   dim = 2
-  nx = 20
-  ny = 20
+  nx = 200
+  ny = 1
   nz = 0
-  xmin = 0
-  xmax = 40
+  xmin = -10
+  xmax = 10
   ymin = 0
-  ymax = 40
+  ymax = 1
   zmin = 0
   zmax = 0
   elem_type = QUAD4
@@ -51,13 +51,6 @@
     family = LAGRANGE
   [../]
 
-  # order parameter 3
-  [./eta3]
-    order = FIRST
-    family = LAGRANGE
-    initial_condition = 0.0
-  [../]
-
   # phase concentration 1
   [./c1]
     order = FIRST
@@ -70,13 +63,6 @@
     order = FIRST
     family = LAGRANGE
     initial_condition = 0.5
-  [../]
-
-  # phase concentration 3
-  [./c3]
-    order = FIRST
-    family = LAGRANGE
-    initial_condition = 0.8
   [../]
 
   # Lagrange multiplier
@@ -135,13 +121,6 @@
     args = 'c2'
     function = '20*(c2-0.5)^2'
   [../]
-  [./f3]
-    type = DerivativeParsedMaterial
-    f_name = F3
-    args = 'c3'
-    function = '20*(c3-0.8)^2'
-  [../]
-
   # Switching functions for each phase
   # h1(eta1, eta2, eta3)
   [./h1]

@@ -120,12 +120,12 @@
   [./f_eta1]
     type = ParsedFunction
     #value = (-tanh(x+5)+1)/2
-    value = (-tanh(x)+1)/2
+    value = (-tanh(4*x)+1)/2
   [../]
   [./f_eta2]
     type = ParsedFunction
     #value = (tanh(x+5)+1-tanh(x-5)-1)/2
-    value = (tanh(x)+1)/2
+    value = (tanh(4*x)+1)/2
   [../]
   [./f_eta3]
     type = ParsedFunction
@@ -193,7 +193,7 @@
     args = 'xAs3 xNd3'
     constant_names = 'factor2 L0UNd_p3 L0NdAs_p3 L0UAs_p3'
     constant_expressions = '100 -1.46 3.60 3.52'
-    function = 'xU3:=1-xAs3-xNd3; -1.03 + factor2*((0.5-xNd3-xAs3)*(0.5-xNd3-xAs3) + (xAs3-0.5)*(xAs3-0.5))
+    function = 'xU3:=1-xAs3-xNd3; 0.5*-0.08724 + 0.5*-0.26 + -1.03 + factor2*((0.5-xNd3-xAs3)*(0.5-xNd3-xAs3) + (xAs3-0.5)*(xAs3-0.5))
                 + 0
                 + 0'
   [../]
@@ -351,7 +351,7 @@
     hj_names  = 'h1 h2 h3'
     gi_name   = g1
     eta_i     = eta1
-    wi        = 40
+    wi        = 0.7
     args      = 'xNd1 xNd2 xNd3 xAs1 xAs2 xAs3 eta2 eta3'
   [../]
   [./ACBulkC1_1]
@@ -399,7 +399,7 @@
     hj_names  = 'h1 h2 h3'
     gi_name   = g2
     eta_i     = eta2
-    wi        = 40
+    wi        = 0.7
     args      = 'xNd1 xNd2 xNd3 xAs1 xAs2 xAs3 eta1 eta3'
   [../]
   [./ACBulkC2_1]
@@ -439,7 +439,7 @@
   [./mult_lambda_1]
     type = MatReaction
     variable = lambda
-    mob_name = 3
+    mob_name = 1
   [../]
   [./mult_ACBulkF_1_1]
     type = KKSMultiACBulkF
@@ -448,7 +448,7 @@
     hj_names  = 'h1 h2 h3'
     gi_name   = g1
     eta_i     = eta1
-    wi        = 40
+    wi        = 0.7
     mob_name  = 1
     args      = 'xNd1 xNd2 xNd3 xAs1 xAs2 xAs3 eta2 eta3'
   [../]
@@ -488,7 +488,7 @@
     hj_names  = 'h1 h2 h3'
     gi_name   = g2
     eta_i     = eta2
-    wi        = 40
+    wi        = 0.7
     mob_name  = 1
     args      = 'xNd1 xNd2 xNd3 xAs1 xAs2 xAs3 eta1 eta3'
   [../]
@@ -528,7 +528,7 @@
     hj_names  = 'h1 h2 h3'
     gi_name   = g3
     eta_i     = eta3
-    wi        = 40
+    wi        = 0.7
     mob_name  = 1
     args      = 'xNd1 xNd2 xNd3 xAs1 xAs2 xAs3 eta1 eta2'
   [../]
@@ -659,7 +659,7 @@
     hj_names = 'h1 h2 h3'
     gj_names = 'g1 g2 g3'
     variable = Energy
-    w = 40
+    w = 0.7
     interfacial_vars =  'eta1  eta2  eta3'
     kappa_names =       'kappa kappa kappa'
   [../]

@@ -1,4 +1,6 @@
-# Simple KKS file
+#
+# KKS simple example in the split form
+#
 
 [Mesh]
   type = GeneratedMesh
@@ -29,7 +31,7 @@
     family = LAGRANGE
   [../]
 
-  # Global concentration
+  # hydrogen concentration
   [./c]
     order = FIRST
     family = LAGRANGE
@@ -41,28 +43,28 @@
     family = LAGRANGE
   [../]
 
-  # phase 1 solute concentration
+  # Phase 1 solute concentration
   [./x1]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.25
+    initial_condition = 0.001
   [../]
-  # phase 2 solute concentration
+  # Phase 2 solute concentration
   [./x2]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.25
+    initial_condition = 0.6
   [../]
 []
 
 [Functions]
   [./ic_func_eta]
     type = ParsedFunction
-    value = 0.5*(1.0-tanh(x/sqrt(2.0)))
+    value = 0.5*(1.0-tanh((x)/sqrt(2.0)))
   [../]
   [./ic_func_c]
     type = ParsedFunction
-    value = 0.25*(1.0-tanh(x/sqrt(2.0)))
+    value = '0.9*(0.5*(1.0-tanh(x/sqrt(2.0))))^3*(6*(0.5*(1.0-tanh(x/sqrt(2.0))))^2-15*(0.5*(1.0-tanh(x/sqrt(2.0))))+10)+0.1*(1-(0.5*(1.0-tanh(x/sqrt(2.0))))^3*(6*(0.5*(1.0-tanh(x/sqrt(2.0))))^2-15*(0.5*(1.0-tanh(x/sqrt(2.0))))+10))'
   [../]
 []
 
@@ -74,29 +76,26 @@
   [../]
   [./c]
     variable = c
-    # type = FunctionIC
-    # function = ic_func_c
-    type = RandomIC
-    min = 0.24
-    max = 0.26
+    type = FunctionIC
+    function = ic_func_c
   [../]
 []
 
 [Materials]
-  # Free energy of phase 1
-  [./f1]
+  # Free energy of Phase 1
+  [./F1]
     type = DerivativeParsedMaterial
-    f_name = f1
+    f_name = F1
     args = 'x1'
     constant_names = 'dEAsAs_p1 dENdNd_p1 dENdAs_p1 L0UNd_p1 L0NdAs_p1 L0UAs_p1'
     constant_expressions = '-1.44 2.60 -3.225 4.17 -3.225 -1.04'
     function = 'xU1:=1-x1-x1; xU1*-0.15608 + 100*x1^2'
   [../]
 
-  # Free energy of phase 2
-  [./f2]
+  # Free energy of Phase 2
+  [./F2]
     type = DerivativeParsedMaterial
-    f_name = f2
+    f_name = F2
     args = 'x2'
     constant_names = 'dENdAs factor1 L0UNd_p2 L0UAs_p2 L0NdAs_p2'
     constant_expressions = '-1.57 200 1.01 11.38 16.65'
@@ -142,14 +141,9 @@
     type = KKSPhaseChemicalPotential
     variable = x1
     cb       = x2
-    fa_name  = f1
-    fb_name  = f2
+    fa_name  = F1
+    fb_name  = F2
   [../]
-
-# c -> cAs, cNd
-# w -> wAs, wNd
-# x1 -> x1As x1Nd
-# x2 -> x2As x2Nd
 
   #
   # Cahn-Hilliard Equation
@@ -159,8 +153,8 @@
     variable = c
     ca       = x1
     cb       = x2
-    fa_name  = f1
-    fb_name  = f2
+    fa_name  = F1
+    fb_name  = F2
     w        = w
   [../]
 
@@ -181,9 +175,9 @@
   [./ACBulkF]
     type = KKSACBulkF
     variable = eta
-    fa_name  = f1
-    fb_name  = f2
-    w        = 1.0
+    fa_name  = F1
+    fb_name  = F2
+    w        = 0.3
     args = 'x1 x2'
   [../]
   [./ACBulkC]
@@ -191,8 +185,8 @@
     variable = eta
     ca       = x1
     cb       = x2
-    fa_name  = f1
-    fb_name  = f2
+    fa_name  = F1
+    fb_name  = F2
   [../]
   [./ACInterface]
     type = ACInterface
@@ -209,9 +203,9 @@
   [./GlobalFreeEnergy]
     variable = Fglobal
     type = KKSGlobalFreeEnergy
-    fa_name = f1
-    fb_name = f2
-    w = 1.0
+    fa_name = F1
+    fb_name = F2
+    w = 0.3
   [../]
 []
 
