@@ -5,12 +5,12 @@
   dim = 2
   elem_type = QUAD4
   nx = 200
-  ny = 1
+  ny = 2
   nz = 0
   xmin = -10
   xmax = 10
   ymin = 0
-  ymax = 1
+  ymax = 2
   zmin = 0
   zmax = 0
 []

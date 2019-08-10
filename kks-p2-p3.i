@@ -48,26 +48,26 @@
     family = LAGRANGE
   [../]
   # phase 1 solute concentration
-  [./xAs1]
-    order = FIRST
-    family = LAGRANGE
-    initial_condition = 0.42
-  [../]
-  [./xNd1]
-    order = FIRST
-    family = LAGRANGE
-    initial_condition = 0.72
-  [../]
-  # phase 2 solute concentration
   [./xAs2]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.42
+    initial_condition = 0.0
   [../]
   [./xNd2]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.72
+    initial_condition = 0.0
+  [../]
+  # phase 2 solute concentration
+  [./xAs3]
+    order = FIRST
+    family = LAGRANGE
+    initial_condition = 0.0
+  [../]
+  [./xNd3]
+    order = FIRST
+    family = LAGRANGE
+    initial_condition = 0.5
   [../]
 []
 
@@ -87,43 +87,27 @@
     variable = eta
     type = FunctionIC
     function = ic_func_eta
-    #type = RandomIC
-    #min = 0.1
-    #max = 0.9
   [../]
   [./xAs]
     variable = xAs
     type = FunctionIC
     function = ic_func_c
-    #type = RandomIC
-    #min = 0.24
-    #max = 0.26
+    # type = RandomIC
+    # min = 0.24
+    # max = 0.26
   [../]
   [./xNd]
     variable = xNd
     type = FunctionIC
-    function = ic_func_c
-    #type = RandomIC
-    #min = 0.24
-    #max = 0.26
+    function = 0
+    # type = RandomIC
+    # min = 0.24
+    # max = 0.26
   [../]
 []
 
 [Materials]
   # Free energy of phase 1
-  [./f1]
-    type = DerivativeParsedMaterial
-    f_name = f1
-    args = 'xAs1 xNd1'
-    constant_names = 'dEAsAs_p1 dENdNd_p1 dENdAs_p1 L0UNd_p1 L0NdAs_p1 L0UAs_p1'
-    constant_expressions = '-1.44 2.60 -3.225 4.17 -3.225 -1.04'
-    # function = 'xU1:=1-xAs1-xNd1; xU1*-0.15608 + 50*xAs1^2 + 50*xNd1^2'
-    function = 'xU1:=1-xAs1-xNd1; xU1*-0.15608 + xNd1*0.05182 + xAs1*0.05182 + 3*xNd1*xNd1*dENdNd_p1
-                + 8.617e-05*300*(xU1*plog(xU1,0.1) + xNd1*plog(xNd1,0.0001) + xAs1*plog(xAs1,0.0001))
-                + xU1*xNd1*L0UNd_p1'
-  [../]
-
-  # Free energy of phase 2
   [./f2]
     type = DerivativeParsedMaterial
     f_name = f2
@@ -132,6 +116,18 @@
     constant_expressions = '-1.57 200 1.01 11.38 16.65'
     function = 'xU2:=1-xAs2-xNd2; 0.5*-0.21585 + 0.5*-0.263903 + dENdAs
                 + factor1*((xAs2-0.5)^2 + (xNd2-0.5)^2)
+                + 0
+                + 0'
+  [../]
+
+  # Free energy of phase 3
+  [./f3]
+    type = DerivativeParsedMaterial
+    f_name = f3
+    args = 'xAs3 xNd3'
+    constant_names = 'factor2 L0UNd_p3 L0NdAs_p3 L0UAs_p3'
+    constant_expressions = '100 -1.46 3.60 3.52'
+    function = 'xU3:=1-xAs3-xNd3; 0.5*-0.08724 + 0.5*-0.26 + -1.03 + factor2*((0.5-xNd3-xAs3)*(0.5-xNd3-xAs3) + (xAs3-0.5)*(xAs3-0.5))
                 + 0
                 + 0'
   [../]
@@ -162,36 +158,36 @@
   # enforce c = (1-h(eta))*cl + h(eta)*cs
   [./PhaseConc1]
     type = KKSPhaseConcentration
-    ca       = xAs1
-    variable = xAs2
+    ca       = xAs2
+    variable = xAs3
     c        = xAs
     eta      = eta
   [../]
   [./PhaseConc2]
     type = KKSPhaseConcentration
-    ca       = xNd1
-    variable = xNd2
+    ca       = xNd2
+    variable = xNd3
     c        = xNd
     eta      = eta
   [../]
   # enforce pointwise equality of chemical potentials
   [./ChemPotSolute1]
     type = KKSPhaseChemicalPotential
-    variable = xAs1
-    cb       = xAs2
-    args_a = xNd1
-    args_b = xNd2
-    fa_name  = f1
-    fb_name  = f2
+    variable = xAs2
+    cb       = xAs3
+    args_a = xNd2
+    args_b = xNd3
+    fa_name  = f2
+    fb_name  = f3
   [../]
   [./ChemPotSolute2]
     type = KKSPhaseChemicalPotential
-    variable = xNd1
-    cb       = xNd2
-    args_a = xAs1
-    args_b = xAs2
-    fa_name  = f1
-    fb_name  = f2
+    variable = xNd2
+    cb       = xNd3
+    args_a = xAs2
+    args_b = xAs3
+    fa_name  = f2
+    fb_name  = f3
   [../]
 # c -> cAs, cNd
 # w -> wAs, wNd
@@ -204,21 +200,21 @@
   [./CHBulk1]
     type = KKSSplitCHCRes
     variable = xAs
-    ca       = xAs1
-    cb       = xAs2
-    args_a = xNd1
-    fa_name  = f1
-    fb_name  = f2
+    ca       = xAs2
+    cb       = xAs3
+    args_a = xNd2
+    fa_name  = f2
+    fb_name  = f3
     w        = wAs
   [../]
   [./CHBulk2]
     type = KKSSplitCHCRes
     variable = xNd
-    ca       = xNd1
-    cb       = xNd2
-    args_a = 'xNd2 xAs1'
-    fa_name  = f1
-    fb_name  = f2
+    ca       = xNd2
+    cb       = xNd3
+    args_a = xAs2
+    fa_name  = f2
+    fb_name  = f3
     w        = wNd
   [../]
 
@@ -248,28 +244,28 @@
   [./ACBulkF]
     type = KKSACBulkF
     variable = eta
-    fa_name  = f1
-    fb_name  = f2
+    fa_name  = f2
+    fb_name  = f3
     w        = 1.0
-    args = 'xAs1 xAs2 xNd1 xNd2'
+    args = 'xAs2 xAs3 xNd2 xNd3'
   [../]
   [./ACBulkC1]
     type = KKSACBulkC
     variable = eta
-    ca       = xAs1
-    cb       = xAs2
-    args = 'xNd1 xNd2'
-    fa_name  = f1
-    fb_name  = f2
+    ca       = xAs2
+    cb       = xAs3
+    args = 'xNd2 xNd3'
+    fa_name  = f2
+    fb_name  = f3
   [../]
   [./ACBulkC2]
     type = KKSACBulkC
     variable = eta
-    ca       = xNd1
-    cb       = xNd2
-    args = 'xAs1 xAs2'
-    fa_name  = f1
-    fb_name  = f2
+    ca       = xNd2
+    cb       = xNd3
+    args = 'xAs2 xAs3'
+    fa_name  = f2
+    fb_name  = f3
   [../]
   [./ACInterface]
     type = ACInterface
@@ -286,8 +282,8 @@
   [./GlobalFreeEnergy]
     variable = Fglobal
     type = KKSGlobalFreeEnergy
-    fa_name = f1
-    fb_name = f2
+    fa_name = f2
+    fb_name = f3
     w = 1.0
   [../]
 []

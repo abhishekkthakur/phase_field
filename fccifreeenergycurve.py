@@ -19,15 +19,15 @@ Gp3_values = []
 factor1 = 200
 factor2 = 100
 a = 0.0001
-while (a < 0.5):
-    x = a
+while (a < 0.99):
+    x = 0.0001
     y = a
 
     # This is the mechanical mixing part of phase 1 and phase 2
     gmm_p1 = (1-x-y)*-0.15608 + x*0.05182 + y*0.05182 + 3*x*x*2.60 #+ 3*x*y*-3.225+ 3*y*y*-1.44
-    gmm_p2 = -1.57 + factor1*((x-0.5)*(x-0.5) + (y-0.5)*(y-0.5))
+    gmm_p2 = 0.5*(-0.21585-0.263903) + -1.57 + factor1*((x-0.5)*(x-0.5) + (y-0.5)*(y-0.5))
     #gmm_p3 = (1-x-y)*-0.08724 + x*-0.23777 + y*-0.23205
-    gmm_p3 = -1.03 + factor2*((0.5-x-y)*(0.5-x-y) + (y-0.5)*(y-0.5))
+    gmm_p3 = 0.5*(-0.08724-0.26813) + -1.03 + factor2*((0.5-x-y)*(0.5-x-y) + (y-0.5)*(y-0.5))
 
     # This is the ideal part of phase 1 and phase 2
     gid_p1 = 8.617e-05*300*((1-x-y)*math.log(1-x-y) + x*math.log(x) + y*math.log(y))
@@ -37,7 +37,7 @@ while (a < 0.5):
     gid_p3 = 0
 
     # This is the excess part of phase 1 and phase 2
-    gex_p1 = 3*(1-x-y)*x*4.17 # + x*y*-3.225 + (1-x-y)*y*-1.04
+    gex_p1 = (1-x-y)*x*4.17 # + x*y*-3.225 + (1-x-y)*y*-1.04
     gex_p2 = 0 #(1-x-y)*x*1.01 #+ (1-x-y)*y*11.38 + x*y*16.65
     #gex_p3 = 4*(1-x-y)*x*-1.46 + 4*x*y*3.60 + 4*(1-x-y)*y*3.52
     gex_p3 = 0
