@@ -6,12 +6,12 @@
   type = GeneratedMesh
   dim = 2
   nx = 200
-  ny = 1
+  ny = 2
   nz = 0
   xmin = -10
   xmax = 10
   ymin = 0
-  ymax = 1
+  ymax = 2
   zmin = 0
   zmax = 0
   elem_type = QUAD4
@@ -51,11 +51,18 @@
     family = LAGRANGE
   [../]
 
+  # order parameter 3
+  [./eta3]
+    order = FIRST
+    family = LAGRANGE
+    #initial_condition = 0.0
+  [../]
+
   # phase concentration 1
   [./c1]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.2
+    initial_condition = 0.0
   [../]
 
   # phase concentration 2
@@ -63,6 +70,13 @@
     order = FIRST
     family = LAGRANGE
     initial_condition = 0.5
+  [../]
+
+  # phase concentration 3
+  [./c3]
+    order = FIRST
+    family = LAGRANGE
+    initial_condition = 1.0
   [../]
 
   # Lagrange multiplier
@@ -73,36 +87,65 @@
   [../]
 []
 
+[Functions]
+  [./ic_func_eta]
+    type = ParsedFunction
+    value = 0.5*(1.0-tanh(x/sqrt(2.0)))
+  [../]
+  [./ic_func_c]
+    type = ParsedFunction
+    value = 0.25*(1.0-tanh(x/sqrt(2.0)))
+  [../]
+[]
+
 [ICs]
   [./eta1]
     variable = eta1
-    type = SmoothCircleIC
-    x1 = 20.0
-    y1 = 20.0
-    radius = 10
-    invalue = 0.9
-    outvalue = 0.1
-    int_width = 4
+    type = FunctionIC
+    function = ic_func_eta
+    #type = SmoothCircleIC
+    #x1 = 20.0
+    #y1 = 20.0
+    #radius = 10
+    #invalue = 0.9
+    #outvalue = 0.1
+    #int_width = 4
   [../]
   [./eta2]
     variable = eta2
-    type = SmoothCircleIC
-    x1 = 20.0
-    y1 = 20.0
-    radius = 10
-    invalue = 0.1
-    outvalue = 0.9
-    int_width = 4
+    type = FunctionIC
+    function = ic_func_eta
+    #type = SmoothCircleIC
+    #x1 = 20.0
+    #y1 = 20.0
+    #radius = 10
+    #invalue = 0.1
+    #outvalue = 0.9
+    #int_width = 4
+  [../]
+  [./eta3]
+    variable = eta3
+    type = FunctionIC
+    function = ic_func_eta
+    #type = SmoothCircleIC
+    #x1 = 20.0
+    #y1 = 20.0
+    #radius = 10
+    #invalue = 0.1
+    #outvalue = 0.9
+    #int_width = 4
   [../]
   [./c]
     variable = c
-    type = SmoothCircleIC
-    x1 = 20.0
-    y1 = 20.0
-    radius = 10
-    invalue = 0.2
-    outvalue = 0.5
-    int_width = 2
+    type = FunctionIC
+    function = ic_func_c
+    #type = SmoothCircleIC
+    #x1 = 20.0
+    #y1 = 20.0
+    #radius = 10
+    #invalue = 0.2
+    #outvalue = 0.5
+    #int_width = 2
   [../]
 []
 
@@ -113,14 +156,38 @@
     type = DerivativeParsedMaterial
     f_name = F1
     args = 'c1'
-    function = '20*(c1-0.2)^2'
+    constant_names = 'dEAsAs_p1 dENdNd_p1 dENdAs_p1 L0UNd_p1 L0NdAs_p1 L0UAs_p1'
+    constant_expressions = '-1.44 2.60 -3.225 4.17 -3.225 -1.04'
+    # function = 'xU1:=1-xAs1-xNd1; xU1*-0.15608 + 50*xAs1^2 + 50*xNd1^2'
+    #function = 'xU1:=1-c1-c1; xU1*-0.15608 + c1*0.05182 + c1*0.05182 + 3*c1*c1*dENdNd_p1
+    #            + 8.617e-05*300*(xU1*plog(xU1,0.1) + c1*plog(c1,0.0001) + c1*plog(c1,0.0001))
+    #            + xU1*c1*L0UNd_p1'
+    function = '10*c1*c1'
   [../]
   [./f2]
     type = DerivativeParsedMaterial
     f_name = F2
     args = 'c2'
-    function = '20*(c2-0.5)^2'
+    constant_names = 'dENdAs factor1 L0UNd_p2 L0UAs_p2 L0NdAs_p2'
+    constant_expressions = '-1.57 200 1.01 11.38 16.65'
+    #function = 'xU2:=1-c2-c2; 0.5*-0.21585 + 0.5*-0.263903 + dENdAs
+    #            + factor1*((c2-0.5)^2 + (c2-0.5)^2)
+    #            + 0
+    #            + 0'
+    function = '10*(c2-1)*(c2-1)'
   [../]
+  [./f3]
+    type = DerivativeParsedMaterial
+    f_name = F3
+    args = 'c3'
+    constant_names = 'factor2 L0UNd_p3 L0NdAs_p3 L0UAs_p3'
+    constant_expressions = '100 -1.46 3.60 3.52'
+    #function = 'xU3:=1-c3-c3; 0.5*-0.08724 + 0.5*-0.26 + -1.03 + factor2*((0.5-c3-c3)*(0.5-c3-c3) + (c3-0.5)*(c3-0.5))
+    #            + 0
+    #            + 0'
+    function = '10*(c3-0.5)*(c3-0.5)'
+  [../]
+
   # Switching functions for each phase
   # h1(eta1, eta2, eta3)
   [./h1]
@@ -204,20 +271,20 @@
   [./diff_c1]
     type = MatDiffusion
     variable = c
-    D_name = Dh1
-    conc = c1
+    diffusivity = Dh1
+    v = c1
   [../]
   [./diff_c2]
     type = MatDiffusion
     variable = c
-    D_name = Dh2
-    conc = c2
+    diffusivity = Dh2
+    v = c2
   [../]
   [./diff_c3]
     type = MatDiffusion
     variable = c
-    D_name = Dh3
-    conc = c3
+    diffusivity = Dh3
+    v = c3
   [../]
 
   # Kernels for Allen-Cahn equation for eta1
@@ -448,17 +515,30 @@
 
 [Executioner]
   type = Transient
-  solve_type = 'PJFNK'
-  petsc_options_iname = '-pc_type -sub_pc_type   -sub_pc_factor_shift_type'
-  petsc_options_value = 'asm       ilu            nonzero'
-  l_max_its = 30
-  nl_max_its = 10
-  l_tol = 1.0e-4
-  nl_rel_tol = 1.0e-10
-  nl_abs_tol = 1.0e-11
+  solve_type = NEWTON #'PJFNK'
+  # petsc_options_iname = '-pc_type -sub_pc_type   -sub_pc_factor_shift_type'
+  # petsc_options_value = 'asm       ilu            nonzero'
+  petsc_options_iname = '-pc_type  -pc_factor_shift_type'
+  petsc_options_value = 'lu        nonzero'
+  l_max_its = 100
+  nl_max_its = 1000
+  l_tol = 1.0e-8
+  nl_rel_tol = 1.0e-9
+  nl_abs_tol = 1.0e-9
+  end_time = 1e10
 
-  num_steps = 100
-  dt = 0.5
+  [./TimeStepper]
+    type = IterationAdaptiveDT
+    optimal_iterations = 8
+    iteration_window = 2
+    growth_factor = 1.5
+    dt = 1e-5
+  [../]
+  [./Predictor]
+    type = SimplePredictor
+    scale = 0.5
+  [../]
+
 []
 
 [Preconditioning]
@@ -475,4 +555,5 @@
 
 [Outputs]
   exodus = true
+  print_linear_residuals = false
 []

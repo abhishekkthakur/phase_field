@@ -47,27 +47,27 @@
     order = FIRST
     family = LAGRANGE
   [../]
-  # phase 1 solute concentration
+  # phase 2 solute concentration
   [./xAs2]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.0
+    initial_condition = 0.28
   [../]
   [./xNd2]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.0
+    initial_condition = 0.76
   [../]
-  # phase 2 solute concentration
+  # phase 3 solute concentration
   [./xAs3]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.0
+    initial_condition = 0.28
   [../]
   [./xNd3]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.5
+    initial_condition = 0.76
   [../]
 []
 
@@ -91,7 +91,7 @@
   [./xAs]
     variable = xAs
     type = FunctionIC
-    function = ic_func_c
+    function = 0.5
     # type = RandomIC
     # min = 0.24
     # max = 0.26
@@ -99,7 +99,7 @@
   [./xNd]
     variable = xNd
     type = FunctionIC
-    function = 0
+    function = ic_func_c
     # type = RandomIC
     # min = 0.24
     # max = 0.26
@@ -107,7 +107,7 @@
 []
 
 [Materials]
-  # Free energy of phase 1
+  # Free energy of phase 2
   [./f2]
     type = DerivativeParsedMaterial
     f_name = f2
@@ -127,7 +127,8 @@
     args = 'xAs3 xNd3'
     constant_names = 'factor2 L0UNd_p3 L0NdAs_p3 L0UAs_p3'
     constant_expressions = '100 -1.46 3.60 3.52'
-    function = 'xU3:=1-xAs3-xNd3; 0.5*-0.08724 + 0.5*-0.26 + -1.03 + factor2*((0.5-xNd3-xAs3)*(0.5-xNd3-xAs3) + (xAs3-0.5)*(xAs3-0.5))
+    function = 'xU3:=1-xAs3-xNd3; 0.5*-0.08724 + 0.5*-0.26 + -1.03
+                + factor2*((0.5-xNd3-xAs3)*(0.5-xNd3-xAs3) + (xAs3-0.5)*(xAs3-0.5))
                 + 0
                 + 0'
   [../]

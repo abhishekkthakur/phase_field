@@ -8,12 +8,12 @@
   type = GeneratedMesh
   dim = 2
   nx = 200
-  ny = 1
+  ny = 2
   nz = 0
   xmin = -10
   xmax = 10
   ymin = 0
-  ymax = 1
+  ymax = 2
   zmin = 0
   zmax = 0
   elem_type = QUAD4
@@ -57,14 +57,14 @@
   [./xAs1]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.005
+    initial_condition = 0.42
     #initial_condition = 0.7
   [../]
   # Local concentration of Nd in Phase 1.
   [./xNd1]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.005
+    initial_condition = 0.72
     #initial_condition = 0.1
   [../]
   # Local concentration of As in Phase 2.
@@ -90,14 +90,14 @@
     order = FIRST
     family = LAGRANGE
     #initial_condition = 0.25
-    initial_condition = 0.0
+    initial_condition = 0.42
   [../]
   # Local concentration of Nd in Phase 3.
   [./xNd3]
     order = FIRST
     family = LAGRANGE
     #initial_condition = 0.01
-    initial_condition = 0.0
+    initial_condition = 0.72
   [../]
   # Lagrange multiplier
   [./lambda]
@@ -107,14 +107,6 @@
   [../]
 []
 
-#[BCs]
-#  [./BCxAs2]
-#    type = NeumannBC
-#    variable = xAs2
-#    boundary = 'left right top bottom'
-#    value = 0
-#  [../]
-#[]
 # Function definition block.
 [Functions]
   [./f_eta1]
