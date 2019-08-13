@@ -85,8 +85,11 @@
 [ICs]
   [./eta]
     variable = eta
-    type = FunctionIC
-    function = ic_func_eta
+    #type = FunctionIC
+    #function = ic_func_eta
+    type = RandomIC
+    min = 0.1
+    max = 0.9
   [../]
   [./xAs]
     variable = xAs

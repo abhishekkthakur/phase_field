@@ -163,7 +163,7 @@
     args = 'xAs1 xNd1'
 
     constant_names = 'dEAsAs_p1 dENdNd_p1 dENdAs_p1 L0UNd_p1 L0NdAs_p1 L0UAs_p1'
-    constant_expressions = '-1.44 2.60 -3.225 4.17 -3.225 -1.04'
+    constant_expressions = '-1.44 3.84 -3.225 4.17 -3.225 -1.04'
     function = 'xU1:=1-xAs1-xNd1; xU1*-0.15608 + xNd1*0.05182 + xAs1*0.05182 + 3*xNd1*xNd1*dENdNd_p1
                 + 8.617e-05*300*(xU1*plog(xU1,0.01) + xNd1*plog(xNd1,0.01) + xAs1*plog(xAs1,0.01))
                 + xU1*xNd1*L0UNd_p1'
@@ -185,7 +185,7 @@
     args = 'xAs3 xNd3'
     constant_names = 'factor2 L0UNd_p3 L0NdAs_p3 L0UAs_p3'
     constant_expressions = '100 -1.46 3.60 3.52'
-    function = 'xU3:=1-xAs3-xNd3; 0.5*-0.08724 + 0.5*-0.26 + -1.03 + factor2*((0.5-xNd3-xAs3)*(0.5-xNd3-xAs3) + (xAs3-0.5)*(xAs3-0.5))
+    function = 'xU3:=1-xAs3-xNd3; 0.5*-0.08724 + 0.5*-0.26813 + -1.03 + factor2*((0.5-xNd3-xAs3)*(0.5-xNd3-xAs3) + (xAs3-0.5)*(xAs3-0.5))
                 + 0
                 + 0'
   [../]

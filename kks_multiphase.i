@@ -17,14 +17,6 @@
   elem_type = QUAD4
 []
 
-#[BCs]
-#  [./Periodic]
-#    [./all]
-#      auto_direction = 'x y'
-#    [../]
-#  [../]
-#[]
-
 [AuxVariables]
   [./Energy]
     order = CONSTANT
@@ -98,32 +90,32 @@
   [./eta1]
     variable = eta1
     type = FunctionIC
-    function = 'if(x<0,-(-10+x)/10,0)'
+    function = '-(tanh(x+5)+1)/2'
   [../]
   [./eta2]
     variable = eta2
     type = FunctionIC
-    function = '(10-abs(x))/10'
+    function = '-(tanh(x+5)+1)/2 + (tanh(x-5)+1)/2'
   [../]
   [./eta3]
     variable = eta3
     type = FunctionIC
-    function = 'if(x>0,x/10,0)'
+    function = '(tanh(x-5)+1)/2'
   [../]
   [./c1]
     variable = c1
     type = FunctionIC
-    function = '(x+10)/20'
+    function = 'if(x<0,-(10+x)/10,0)'
   [../]
   [./c2]
     variable = c2
     type = FunctionIC
-    function = '(x+10)/20'
+    function = '(10-abs(x))/10'
   [../]
   [./c3]
     variable = c3
     type = FunctionIC
-    function = '(x+10)/20'
+    function = 'if(x>0,x/10,0)'
   [../]
 []
 
