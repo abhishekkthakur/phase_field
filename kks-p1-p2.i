@@ -51,23 +51,23 @@
   [./xAs1]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.4
+    initial_condition = 0.42
   [../]
   [./xNd1]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.6
+    initial_condition = 0.72
   [../]
   # phase 2 solute concentration
   [./xAs2]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.4
+    initial_condition = 0.42
   [../]
   [./xNd2]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.6
+    initial_condition = 0.72
   [../]
 []
 
@@ -118,9 +118,10 @@
     constant_names = 'dEAsAs_p1 dENdNd_p1 dENdAs_p1 L0UNd_p1 L0NdAs_p1 L0UAs_p1'
     constant_expressions = '-1.44 -3.84 -3.225 4.17 -3.225 -1.04'
     # function = 'xU1:=1-xAs1-xNd1; xU1*-0.15608 + 50*xAs1^2 + 50*xNd1^2'
-    function = 'xU1:=1-xAs1-xNd1; xU1*-0.15608 + xNd1*0.05182 + xAs1*0.05182 + 3*xNd1*xNd1*dENdNd_p1
+    function = 'xU1:=1-xAs1-xNd1; xU1*-0.15608 + xNd1*0.05182 + xAs1*0.05182
                 + 8.617e-05*300*(xU1*plog(xU1,0.1) + xNd1*plog(xNd1,0.0001) + xAs1*plog(xAs1,0.0001))
                 + xU1*xNd1*L0UNd_p1'
+                #+ 3*xNd1*xNd1*dENdNd_p1
   [../]
 
   # Free energy of phase 2
