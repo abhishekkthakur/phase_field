@@ -51,7 +51,7 @@
   [./xAs1]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.0
+    #initial_condition = 0.0
   [../]
   [./xNd1]
     order = FIRST
@@ -62,7 +62,7 @@
   [./xAs3]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.0
+    #initial_condition = 0.0
   [../]
   [./xNd3]
     order = FIRST
@@ -74,7 +74,7 @@
 [Functions]
   [./ic_func_eta]
     type = ParsedFunction
-    value = 0.5*(1.0-tanh(x/sqrt(2.0)))
+    value = 0.5*(1.0-tanh(4*x/sqrt(2.0)))
   [../]
   [./ic_func_c]
     type = ParsedFunction
@@ -88,16 +88,16 @@
     #type = FunctionIC
     #function = ic_func_eta
     type = RandomIC
-    min = 0.1
-    max = 0.9
+    min = 0.4
+    max = 0.6
   [../]
   [./xAs]
     variable = xAs
-    type = FunctionIC
-    function = ic_func_c
-    # type = RandomIC
-    # min = 0.24
-    # max = 0.26
+    #type = FunctionIC
+    #function = ic_func_c
+    type = RandomIC
+    min = 0
+    max = 0.5
   [../]
   [./xNd]
     variable = xNd
@@ -106,6 +106,18 @@
     # type = RandomIC
     # min = 0.24
     # max = 0.26
+  [../]
+  [./xAs1]
+    variable = xAs1
+    type = RandomIC
+    min = 0.1
+    max = 0.9
+  [../]
+  [./xAs3]
+    variable = xAs3
+    type = RandomIC
+    min = 0.1
+    max = 0.9
   [../]
 []
 
@@ -310,7 +322,8 @@
     optimal_iterations = 8
     iteration_window = 2
     growth_factor = 1.5
-    dt = 1e-5
+    #dt = 1e-5
+    dt = 1e-2
   [../]
   [./Predictor]
     type = SimplePredictor

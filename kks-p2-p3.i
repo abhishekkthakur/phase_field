@@ -4,13 +4,13 @@
   type = GeneratedMesh
   dim = 2
   elem_type = QUAD4
-  nx = 200
-  ny = 2
+  nx = 100
+  ny = 100
   nz = 0
   xmin = -10
   xmax = 10
-  ymin = 0
-  ymax = 2
+  ymin = -10
+  ymax = 10
   zmin = 0
   zmax = 0
 []
@@ -51,23 +51,23 @@
   [./xAs2]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.28
+    initial_condition = 0
   [../]
   [./xNd2]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.76
+    #initial_condition = 0
   [../]
   # phase 3 solute concentration
   [./xAs3]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.28
+    initial_condition = 0.5
   [../]
   [./xNd3]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.76
+    #initial_condition = 0.5
   [../]
 []
 
@@ -85,24 +85,39 @@
 [ICs]
   [./eta]
     variable = eta
-    type = FunctionIC
-    function = ic_func_eta
+    #type = FunctionIC
+    #function = ic_func_eta
+    type = RandomIC
+    min = 0.4
+    max = 0.6
   [../]
   [./xAs]
     variable = xAs
     type = FunctionIC
     function = 0.5
-    # type = RandomIC
-    # min = 0.24
-    # max = 0.26
+    #type = RandomIC
+    #min = 0
+    #max = 0.5
   [../]
   [./xNd]
     variable = xNd
     type = FunctionIC
     function = ic_func_c
-    # type = RandomIC
-    # min = 0.24
-    # max = 0.26
+    #type = RandomIC
+    #min = 0
+    #max = 0.5
+  [../]
+  [./xNd2]
+    variable = xNd2
+    type = RandomIC
+    min = 0.1
+    max = 0.9
+  [../]
+  [./xNd3]
+    variable = xNd3
+    type = RandomIC
+    min = 0.1
+    max = 0.9
   [../]
 []
 
