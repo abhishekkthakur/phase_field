@@ -17,13 +17,13 @@
   elem_type = QUAD4
 []
 
-[BCs]
-  [./Periodic]
-    [./all]
-      auto_direction = 'x y'
-    [../]
-  [../]
-[]
+#[BCs]
+#  [./Periodic]
+#    [./all]
+#      auto_direction = 'x y'
+#    [../]
+#  [../]
+#[]
 
 [AuxVariables]
   [./Energy]
@@ -62,28 +62,24 @@
   [./c1]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.0
   [../]
 
   # phase concentration 2
   [./c2]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.5
   [../]
 
   # phase concentration 3
   [./c3]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 1.0
   [../]
 
   # Lagrange multiplier
   [./lambda]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.0
   [../]
 []
 
@@ -102,50 +98,32 @@
   [./eta1]
     variable = eta1
     type = FunctionIC
-    function = ic_func_eta
-    #type = SmoothCircleIC
-    #x1 = 20.0
-    #y1 = 20.0
-    #radius = 10
-    #invalue = 0.9
-    #outvalue = 0.1
-    #int_width = 4
+    function = 'if(x<0,-(-10+x)/10,0)'
   [../]
   [./eta2]
     variable = eta2
     type = FunctionIC
-    function = ic_func_eta
-    #type = SmoothCircleIC
-    #x1 = 20.0
-    #y1 = 20.0
-    #radius = 10
-    #invalue = 0.1
-    #outvalue = 0.9
-    #int_width = 4
+    function = '(10-abs(x))/10'
   [../]
   [./eta3]
     variable = eta3
     type = FunctionIC
-    function = ic_func_eta
-    #type = SmoothCircleIC
-    #x1 = 20.0
-    #y1 = 20.0
-    #radius = 10
-    #invalue = 0.1
-    #outvalue = 0.9
-    #int_width = 4
+    function = 'if(x>0,x/10,0)'
   [../]
-  [./c]
-    variable = c
+  [./c1]
+    variable = c1
     type = FunctionIC
-    function = ic_func_c
-    #type = SmoothCircleIC
-    #x1 = 20.0
-    #y1 = 20.0
-    #radius = 10
-    #invalue = 0.2
-    #outvalue = 0.5
-    #int_width = 2
+    function = '(x+10)/20'
+  [../]
+  [./c2]
+    variable = c2
+    type = FunctionIC
+    function = '(x+10)/20'
+  [../]
+  [./c3]
+    variable = c3
+    type = FunctionIC
+    function = '(x+10)/20'
   [../]
 []
 
@@ -174,7 +152,7 @@
     #            + factor1*((c2-0.5)^2 + (c2-0.5)^2)
     #            + 0
     #            + 0'
-    function = '10*(c2-1)*(c2-1)'
+    function = '10*(c2-0.5)*(c2-0.5)'
   [../]
   [./f3]
     type = DerivativeParsedMaterial
@@ -185,7 +163,7 @@
     #function = 'xU3:=1-c3-c3; 0.5*-0.08724 + 0.5*-0.26 + -1.03 + factor2*((0.5-c3-c3)*(0.5-c3-c3) + (c3-0.5)*(c3-0.5))
     #            + 0
     #            + 0'
-    function = '10*(c3-0.5)*(c3-0.5)'
+    function = '10*(c3-1)*(c3-1)'
   [../]
 
   # Switching functions for each phase
