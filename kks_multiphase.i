@@ -5,16 +5,24 @@
 [Mesh]
   type = GeneratedMesh
   dim = 2
-  nx = 200
-  ny = 2
+  nx = 100
+  ny = 100
   nz = 0
-  xmin = -10
-  xmax = 10
+  xmin = 0
+  xmax = 40
   ymin = 0
-  ymax = 2
+  ymax = 40
   zmin = 0
   zmax = 0
   elem_type = QUAD4
+[]
+
+[BCs]
+  [./Periodic]
+    [./all]
+      auto_direction = 'x y'
+    [../]
+  [../]
 []
 
 [AuxVariables]
@@ -47,28 +55,28 @@
   [./eta3]
     order = FIRST
     family = LAGRANGE
-    #initial_condition = 0.0
+    initial_condition = 0.0
   [../]
 
   # phase concentration 1
   [./c1]
     order = FIRST
     family = LAGRANGE
-    #initial_condition = 0.24
+    initial_condition = 0.2
   [../]
 
   # phase concentration 2
   [./c2]
     order = FIRST
     family = LAGRANGE
-    #initial_condition = 0.45
+    initial_condition = 0.5
   [../]
 
   # phase concentration 3
   [./c3]
     order = FIRST
     family = LAGRANGE
-    #initial_condition = 0.8
+    initial_condition = 0.8
   [../]
 
   # Lagrange multiplier
@@ -83,24 +91,41 @@
   [./eta1]
     variable = eta1
     type = RandomIC
-    min = 0.4
-    max = 0.6
-    #type = FunctionIC
-    #function = '-(tanh(4*x)+1)/2'
+    min = 0.1
+    max = 0.9
+    #type = SmoothCircleIC
+    #x1 = 20.0
+    #y1 = 20.0
+    #radius = 10
+    #invalue = 0.9
+    #outvalue = 0.1
+    #int_width = 4
   [../]
   [./eta2]
     variable = eta2
     type = RandomIC
-    min = 0.4
-    max = 0.6
-    #type = FunctionIC
-    #function = '(tanh(4*x)+1)/2'
+    min = 0.1
+    max = 0.9
+    #type = SmoothCircleIC
+    #x1 = 20.0
+    #y1 = 20.0
+    #radius = 10
+    #invalue = 0.1
+    #outvalue = 0.9
+    #int_width = 4
   [../]
   [./c]
     variable = c
     type = RandomIC
-    min = 0.4
-    max = 0.6
+    min = 0.2
+    max = 0.5
+    #type = SmoothCircleIC
+    #x1 = 20.0
+    #y1 = 20.0
+    #radius = 10
+    #invalue = 0.2
+    #outvalue = 0.5
+    #int_width = 2
   [../]
 []
 
@@ -117,7 +142,7 @@
     type = DerivativeParsedMaterial
     f_name = F2
     args = 'c2'
-    function = '20*(c2-0.5)^2 + 3'
+    function = '20*(c2-0.5)^2'
   [../]
   [./f3]
     type = DerivativeParsedMaterial
@@ -451,19 +476,64 @@
   [../]
 []
 
+#[Executioner]
+#  type = Transient
+#  solve_type = 'PJFNK'
+#  petsc_options_iname = '-pc_type -sub_pc_type   -sub_pc_factor_shift_type'
+#  petsc_options_value = 'asm       ilu            nonzero'
+#  l_max_its = 30
+#  nl_max_its = 10
+#  l_tol = 1.0e-4
+#  nl_rel_tol = 1.0e-10
+#  nl_abs_tol = 1.0e-11
+#
+#  num_steps = 100
+#  dt = 0.5
+#[]
+#
+#[Preconditioning]
+#  active = 'full'
+#  [./full]
+#    type = SMP
+#    full = true
+#  [../]
+#  [./mydebug]
+#    type = FDP
+#    full = true
+#  [../]
+#[]
+#
+#[Outputs]
+#  exodus = true
+#[]
+
 [Executioner]
   type = Transient
-  solve_type = 'PJFNK'
-  petsc_options_iname = '-pc_type -sub_pc_type   -sub_pc_factor_shift_type'
-  petsc_options_value = 'asm       ilu            nonzero'
-  l_max_its = 30
-  nl_max_its = 10
-  l_tol = 1.0e-4
-  nl_rel_tol = 1.0e-10
-  nl_abs_tol = 1.0e-11
+  solve_type = NEWTON #'PJFNK'
+  # petsc_options_iname = '-pc_type -sub_pc_type   -sub_pc_factor_shift_type'
+  # petsc_options_value = 'asm       ilu            nonzero'
+  petsc_options_iname = '-pc_type  -pc_factor_shift_type'
+  petsc_options_value = 'lu        nonzero'
+  l_max_its = 100
+  nl_max_its = 1000
+  l_tol = 1.0e-8
+  nl_rel_tol = 1.0e-9
+  nl_abs_tol = 1.0e-9
+  end_time = 1e10
 
-  num_steps = 100
-  dt = 0.5
+  [./TimeStepper]
+    type = IterationAdaptiveDT
+    optimal_iterations = 8
+    iteration_window = 2
+    growth_factor = 1.5
+    #dt = 1e-5
+    dt = 1e-2
+  [../]
+  [./Predictor]
+    type = SimplePredictor
+    scale = 0.5
+  [../]
+
 []
 
 [Preconditioning]
@@ -480,4 +550,5 @@
 
 [Outputs]
   exodus = true
+  print_linear_residuals = false
 []

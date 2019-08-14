@@ -5,12 +5,12 @@
   dim = 2
   elem_type = QUAD4
   nx = 200
-  ny = 2
+  ny = 200
   nz = 0
   xmin = -10
   xmax = 10
-  ymin = 0
-  ymax = 2
+  ymin = -10
+  ymax = 10
   zmin = 0
   zmax = 0
 []
@@ -303,33 +303,20 @@
   [../]
 []
 
+
 [Executioner]
   type = Transient
-  solve_type = NEWTON #'PJFNK'
-  # petsc_options_iname = '-pc_type -sub_pc_type   -sub_pc_factor_shift_type'
-  # petsc_options_value = 'asm       ilu            nonzero'
-  petsc_options_iname = '-pc_type  -pc_factor_shift_type'
-  petsc_options_value = 'lu        nonzero'
-  l_max_its = 100
-  nl_max_its = 1000
-  l_tol = 1.0e-8
-  nl_rel_tol = 1.0e-9
-  nl_abs_tol = 1.0e-9
-  end_time = 1e10
+  solve_type = 'PJFNK'
+  petsc_options_iname = '-pc_type -sub_pc_type   -sub_pc_factor_shift_type'
+  petsc_options_value = 'asm       ilu            nonzero'
+  l_max_its = 30
+  nl_max_its = 10
+  l_tol = 1.0e-4
+  nl_rel_tol = 1.0e-10
+  nl_abs_tol = 1.0e-11
 
-  [./TimeStepper]
-    type = IterationAdaptiveDT
-    optimal_iterations = 8
-    iteration_window = 2
-    growth_factor = 1.5
-    #dt = 1e-5
-    dt = 1e-2
-  [../]
-  [./Predictor]
-    type = SimplePredictor
-    scale = 0.5
-  [../]
-
+  num_steps = 100000
+  dt = 0.5
 []
 
 [Preconditioning]
@@ -346,5 +333,51 @@
 
 [Outputs]
   exodus = true
-  print_linear_residuals = false
 []
+
+
+#[Executioner]
+#  type = Transient
+#  solve_type = NEWTON #'PJFNK'
+#  # petsc_options_iname = '-pc_type -sub_pc_type   -sub_pc_factor_shift_type'
+#  # petsc_options_value = 'asm       ilu            nonzero'
+#  petsc_options_iname = '-pc_type  -pc_factor_shift_type'
+#  petsc_options_value = 'lu        nonzero'
+#  l_max_its = 100
+#  nl_max_its = 1000
+#  l_tol = 1.0e-8
+#  nl_rel_tol = 1.0e-9
+#  nl_abs_tol = 1.0e-9
+#  end_time = 1e10
+#
+#  [./TimeStepper]
+#    type = IterationAdaptiveDT
+#    optimal_iterations = 8
+#    iteration_window = 2
+#    growth_factor = 1.5
+#    #dt = 1e-5
+#    dt = 1e-2
+#  [../]
+#  [./Predictor]
+#    type = SimplePredictor
+#    scale = 0.5
+#  [../]
+#
+#[]
+#
+#[Preconditioning]
+#  active = 'full'
+#  [./full]
+#    type = SMP
+#    full = true
+#  [../]
+#  [./mydebug]
+#    type = FDP
+#    full = true
+#  [../]
+#[]
+#
+#[Outputs]
+#  exodus = true
+#  print_linear_residuals = false
+#[]
