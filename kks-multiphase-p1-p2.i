@@ -6,24 +6,24 @@
   type = GeneratedMesh
   dim = 2
   nx = 100
-  ny = 100
+  ny = 3
   nz = 0
   xmin = 0
   xmax = 40
   ymin = 0
-  ymax = 40
+  ymax = 3
   zmin = 0
   zmax = 0
   elem_type = QUAD4
 []
 
-[BCs]
-  [./Periodic]
-    [./all]
-      auto_direction = 'x y'
-    [../]
-  [../]
-[]
+#[BCs]
+#  [./Periodic]
+#    [./all]
+#      auto_direction = 'x y'
+#    [../]
+#  [../]
+#[]
 
 [AuxVariables]
   [./Energy]
@@ -135,20 +135,41 @@
   [./f1]
     type = DerivativeParsedMaterial
     f_name = F1
+    #args = 'c1'
+    #function = '20*(c1-0.2)^2'
     args = 'c1'
-    function = '20*(c1-0.2)^2'
+    constant_names = 'dEAsAs_p1 dENdNd_p1 dENdAs_p1 L0UNd_p1 L0NdAs_p1 L0UAs_p1'
+    constant_expressions = '-1.44 3.84 -3.225 4.17 -3.225 -1.04'
+    # function = 'xU1:=1-xAs1-xNd1; xU1*-0.15608 + 50*xAs1^2 + 50*xNd1^2'
+    function = 'xU1:=1-c1-c1; xU1*-0.15608 + c1*0.05182 + c1*0.05182 + 3*c1*c1*3.84
+                + 8.617e-05*300*(xU1*plog(xU1,0.1) + c1*plog(c1,0.0001) + c1*plog(c1,0.0001))
+                + xU1*c1*L0UNd_p1'
+                #+ 3*xNd1*xNd1*dENdNd_p1
   [../]
   [./f2]
     type = DerivativeParsedMaterial
     f_name = F2
+    #args = 'c2'
+    #function = '20*(c2-0.5)^2'
     args = 'c2'
-    function = '20*(c2-0.5)^2'
+    constant_names = 'dENdAs factor1 L0UNd_p2 L0UAs_p2 L0NdAs_p2'
+    constant_expressions = '-1.57 200 1.01 11.38 16.65'
+    function = 'xU2:=1-c2-c2; 0.5*-0.21585 + 0.5*-0.263903 + dENdAs
+                + factor1*((c2-0.5)^2 + (c2-0.5)^2)
+                + 0
+                + 0'
   [../]
   [./f3]
     type = DerivativeParsedMaterial
     f_name = F3
+    #args = 'c3'
+    #function = '20*(c3-0.8)^2'
     args = 'c3'
-    function = '20*(c3-0.8)^2'
+    constant_names = 'factor2 L0UNd_p3 L0NdAs_p3 L0UAs_p3'
+    constant_expressions = '100 -1.46 3.60 3.52'
+    function = 'xU3:=1-c3-c3; 0.5*-0.08724 + 0.5*-0.26 + -1.03 + factor2*((0.5-c3-c3)*(0.5-c3-c3) + (c3-0.5)*(c3-0.5))
+                + 0
+                + 0'
   [../]
 
   # Switching functions for each phase
