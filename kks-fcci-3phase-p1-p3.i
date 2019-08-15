@@ -54,7 +54,7 @@
   [./xAs1]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0
+    #initial_condition = 0
   [../]
   [./xNd1]
     order = FIRST
@@ -65,23 +65,23 @@
   [./xAs2]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.5
+    #initial_condition = 0.5
   [../]
   [./xNd2]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.5
+    #initial_condition = 0.5
   [../]
   # Local phase concentration 3
   [./xAs3]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.5
+    #initial_condition = 0.5
   [../]
   [./xNd3]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.1
+    initial_condition = 0.5
   [../]
   # Lagrange multiplier
   [./lambda]
@@ -130,19 +130,31 @@
   [../]
   [./xAs]
     variable = xAs
-    type = FunctionIC
-    function = ic_func_c
-    #type = RandomIC
-    #min = 0.2
-    #max = 0.5
+    #type = FunctionIC
+    #function = ic_func_c
+    type = RandomIC
+    min = 0
+    max = 0.5
   [../]
   [./xNd]
     variable = xNd
     type = FunctionIC
-    function = ic_func_c
+    function = 0
     #type = RandomIC
     #min = 0.2
     #max = 0.5
+  [../]
+  [./xAs1]
+    variable = xAs1
+    type = RandomIC
+    min = 0.1
+    max = 0.9
+  [../]
+  [./xAs3]
+    variable = xAs3
+    type = RandomIC
+    min = 0.1
+    max = 0.9
   [../]
 []
 
