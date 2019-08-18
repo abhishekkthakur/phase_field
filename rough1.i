@@ -3,7 +3,18 @@
 #
 
 [Mesh]
-  file = kks-fcci-3phase-p1-p3_out.e
+  type = GeneratedMesh
+  dim = 2
+  nx = 25
+  ny = 25
+  nz = 0
+  xmin = -10
+  xmax = 10
+  ymin = -10
+  ymax = 10
+  zmin = 0
+  zmax = 0
+  elem_type = QUAD4
 []
 
 [AuxVariables]
@@ -16,49 +27,122 @@
 [Variables]
   # Global concentrations
   [./xAs]
-    initial_from_file_var = xAs
+    order = FIRST
+    family = LAGRANGE
   [../]
   [./xNd]
-    initial_from_file_var = xNd
+    order = FIRST
+    family = LAGRANGE
   [../]
   # order parameter 1
   [./eta1]
-    initial_from_file_var = eta1
+    order = FIRST
+    family = LAGRANGE
   [../]
   # order parameter 2
   [./eta2]
-    initial_from_file_var = eta2
+    order = FIRST
+    family = LAGRANGE
   [../]
   # order parameter 3
   [./eta3]
-    initial_from_file_var = eta3
+    order = FIRST
+    family = LAGRANGE
+    initial_condition = 0.0
   [../]
   # Local phase concentration 1
   [./xAs1]
-    initial_from_file_var = xAs1
+    order = FIRST
+    family = LAGRANGE
+    initial_condition = 0
   [../]
   [./xNd1]
-    initial_from_file_var = xNd1
+    order = FIRST
+    family = LAGRANGE
+    initial_condition = 0
   [../]
   # Local phase concentration 2
   [./xAs2]
-    initial_from_file_var = xAs2
+    order = FIRST
+    family = LAGRANGE
+    initial_condition = 0.5
   [../]
   [./xNd2]
-    initial_from_file_var = xNd2
+    order = FIRST
+    family = LAGRANGE
+    initial_condition = 0.5
   [../]
   # Local phase concentration 3
   [./xAs3]
-    initial_from_file_var = xAs3
+    order = FIRST
+    family = LAGRANGE
+    initial_condition = 0
   [../]
   [./xNd3]
-    initial_from_file_var = xNd3
+    order = FIRST
+    family = LAGRANGE
+    initial_condition = 0
   [../]
   # Lagrange multiplier
   [./lambda]
-    initial_from_file_var = lambda
+    order = FIRST
+    family = LAGRANGE
+    initial_condition = 0.0
   [../]
 []
+
+
+[Functions]
+  [./ic_func_eta_left]
+    type = ParsedFunction
+    value = 0.5*(1.0-tanh(x/sqrt(2.0)))
+  [../]
+  [./ic_func_eta_right]
+    type = ParsedFunction
+    value = 0.5*(1.0-tanh(-x/sqrt(2.0)))
+  [../]
+  [./ic_func_c]
+    type = ParsedFunction
+    value = 0.25*(1.0-tanh(x/sqrt(2.0)))
+  [../]
+[]
+
+
+[ICs]
+  [./eta1]
+    variable = eta1
+    #type = FunctionIC
+    #function = ic_func_eta_left
+    type = RandomIC
+    min = 0.1
+    max = 0.9
+  [../]
+  [./eta2]
+    variable = eta2
+    #type = FunctionIC
+    #function = ic_func_eta_right
+    type = RandomIC
+    min = 0.1
+    max = 0.9
+  [../]
+  [./xAs]
+    variable = xAs
+    type = FunctionIC
+    function = ic_func_c
+    #type = RandomIC
+    #min = 0.2
+    #max = 0.5
+  [../]
+  [./xNd]
+    variable = xNd
+    type = FunctionIC
+    function = ic_func_c
+    #type = RandomIC
+    #min = 0.2
+    #max = 0.5
+  [../]
+[]
+
 
 [Materials]
   # simple toy free energies
@@ -173,17 +257,12 @@
   [./constants]
     type = GenericConstantMaterial
     prop_names  = 'L   kappa  D'
-    prop_values = '0.7 1.0    1'
+    prop_values = '0.7 1.0    0.01'
   [../]
 []
 
 [Kernels]
   #Kernels for diffusion equation
-  [./xNdBodyForce]
-    variable = xNd
-    type = BodyForce
-    value = 1e-8
-  [../]
   [./diff_time_xNd]
     type = TimeDerivative
     variable = xNd
@@ -241,7 +320,7 @@
     hj_names  = 'h1 h2 h3'
     gi_name   = g1
     eta_i     = eta1
-    wi        = 1.0
+    wi        = 2
     args      = 'xNd1 xNd2 xNd3 xAs1 xAs2 xAs3 eta2 eta3'
   [../]
   [./ACBulkC1_xNd]
@@ -286,7 +365,7 @@
     hj_names  = 'h1 h2 h3'
     gi_name   = g2
     eta_i     = eta2
-    wi        = 1.0
+    wi        = 2
     args      = 'xNd1 xNd2 xNd3 xAs1 xAs2 xAs3 eta1 eta3'
   [../]
   [./ACBulkC2_xNd]
@@ -332,7 +411,7 @@
     hj_names  = 'h1 h2 h3'
     gi_name   = g1
     eta_i     = eta1
-    wi        = 1.0
+    wi        = 2
     mob_name  = 1
     args      = 'xNd1 xNd2 xNd3 xAs1 xAs2 xAs3 eta2 eta3'
   [../]
@@ -370,7 +449,7 @@
     hj_names  = 'h1 h2 h3'
     gi_name   = g2
     eta_i     = eta2
-    wi        = 1.0
+    wi        = 2
     mob_name  = 1
     args      = 'xNd1 xNd2 xNd3 xAs1 xAs2 xAs3 eta1 eta3'
   [../]
@@ -409,7 +488,7 @@
     hj_names  = 'h1 h2 h3'
     gi_name   = g3
     eta_i     = eta3
-    wi        = 1.0
+    wi        = 2
     mob_name  = 1
     args      = 'xNd1 xNd2 xNd3 xAs1 xAs2 xAs3 eta1 eta2'
   [../]
@@ -529,11 +608,42 @@
     hj_names = 'h1 h2 h3'
     gj_names = 'g1 g2 g3'
     variable = Energy
-    w = 1
+    w = 2
     interfacial_vars =  'eta1  eta2  eta3'
     kappa_names =       'kappa kappa kappa'
   [../]
 []
+
+#[Executioner]
+#  type = Transient
+#  solve_type = 'PJFNK'
+#  petsc_options_iname = '-pc_type -sub_pc_type   -sub_pc_factor_shift_type'
+#  petsc_options_value = 'asm       ilu            nonzero'
+#  l_max_its = 30
+#  nl_max_its = 10
+#  l_tol = 1.0e-4
+#  nl_rel_tol = 1.0e-10
+#  nl_abs_tol = 1.0e-11
+#
+#  num_steps = 100
+#  dt = 0.5
+#[]
+#
+#[Preconditioning]
+#  active = 'full'
+#  [./full]
+#    type = SMP
+#    full = true
+#  [../]
+#  [./mydebug]
+#    type = FDP
+#    full = true
+#  [../]
+#[]
+#
+#[Outputs]
+#  exodus = true
+#[]
 
 [Executioner]
   type = Transient
@@ -547,8 +657,7 @@
   l_tol = 1.0e-8
   nl_rel_tol = 1.0e-9
   nl_abs_tol = 1.0e-9
-  end_time = 5e7
-  dtmax = 1e6
+  end_time = 1e10
 
   [./TimeStepper]
     type = IterationAdaptiveDT
@@ -556,7 +665,7 @@
     iteration_window = 2
     growth_factor = 1.5
     #dt = 1e-5
-    dt = 1
+    dt = 1e-2
   [../]
   [./Predictor]
     type = SimplePredictor
@@ -574,13 +683,6 @@
   [./mydebug]
     type = FDP
     full = true
-  [../]
-[]
-
-[Postprocessors]
-  [./XNd]
-    type = ElementAverageValue
-    variable = xNd
   [../]
 []
 

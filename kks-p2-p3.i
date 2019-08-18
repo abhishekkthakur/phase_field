@@ -4,8 +4,8 @@
   type = GeneratedMesh
   dim = 2
   elem_type = QUAD4
-  nx = 100
-  ny = 100
+  nx = 25
+  ny = 25
   nz = 0
   xmin = -10
   xmax = 10
