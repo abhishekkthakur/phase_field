@@ -104,8 +104,8 @@
     type = FunctionIC
     function = ic_func_c
     #type = RandomIC
-    #min = 0
-    #max = 0.5
+    #min = 0.1
+    #max = 0.9
   [../]
   [./xNd2]
     variable = xNd2
@@ -166,7 +166,7 @@
   [./constants]
     type = GenericConstantMaterial
     prop_names  = 'M   L   eps_sq'
-    prop_values = '0.7 0.7 1.0  '
+    prop_values = '0.7 0.7 1  '
   [../]
 []
 
@@ -262,7 +262,7 @@
     variable = eta
     fa_name  = f2
     fb_name  = f3
-    w        = 1.0
+    w        = 1
     args = 'xAs2 xAs3 xNd2 xNd3'
   [../]
   [./ACBulkC1]
@@ -300,7 +300,7 @@
     type = KKSGlobalFreeEnergy
     fa_name = f2
     fb_name = f3
-    w = 1.0
+    w = 1
   [../]
 []
 
@@ -344,7 +344,18 @@
   [../]
 []
 
+[Postprocessors]
+  [./TotalEnergy]
+    type = ElementAverageValue
+    variable = Fglobal
+  [../]
+[]
+
 [Outputs]
   exodus = true
   print_linear_residuals = false
+  #console = true
+  [./csv]
+    type = CSV
+  [../]
 []

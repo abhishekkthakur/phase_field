@@ -5,13 +5,17 @@
 [Mesh]
   type = GeneratedMesh
   dim = 2
+  #nx = 100
+  #ny = 2
   nx = 100
-  ny = 2
+  ny = 1
   nz = 0
   xmin = -10
   xmax = 10
+  #ymin = 0
+  #ymax = 2
   ymin = 0
-  ymax = 2
+  ymax = 1
   zmin = 0
   zmax = 0
   elem_type = QUAD4
@@ -130,11 +134,11 @@
   [../]
   [./xAs]
     variable = xAs
-    #type = FunctionIC
-    #function = ic_func_c
-    type = RandomIC
-    min = 0
-    max = 0.5
+    type = FunctionIC
+    function = ic_func_c
+    #type = RandomIC
+    #min = 0
+    #max = 0.5
   [../]
   [./xNd]
     variable = xNd
@@ -660,6 +664,7 @@
 #  exodus = true
 #[]
 
+
 [Executioner]
   type = Transient
   solve_type = NEWTON #'PJFNK'
@@ -701,7 +706,23 @@
   [../]
 []
 
+[Postprocessors]
+  [./XNd]
+    type = ElementAverageValue
+    variable = xNd
+  [../]
+  [./XAs]
+    type = ElementAverageValue
+    variable = xAs
+  [../]
+  [./Ftotal]
+    type = ElementIntegralVariablePostprocessor
+    variable = Energy
+  [../]
+[]
+
 [Outputs]
   exodus = true
   print_linear_residuals = false
+  csv = true
 []
