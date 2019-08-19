@@ -7,10 +7,10 @@
   nx = 25
   ny = 25
   nz = 0
-  xmin = -10
-  xmax = 10
-  ymin = -10
-  ymax = 10
+  xmin = -15
+  xmax = 15
+  ymin = -15
+  ymax = 15
   zmin = 0
   zmax = 0
 []
@@ -33,10 +33,12 @@
   [./xAs]
     order = FIRST
     family = LAGRANGE
+    initial_condition = 0.5
   [../]
   [./xNd]
     order = FIRST
     family = LAGRANGE
+    initial_condition = 0.25
   [../]
   # chemical potential
   [./wAs]
@@ -51,12 +53,12 @@
   [./xAs2]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0
+    initial_condition = 0.5
   [../]
   [./xNd2]
     order = FIRST
     family = LAGRANGE
-    #initial_condition = 0
+    initial_condition = 0.5
   [../]
   # phase 3 solute concentration
   [./xAs3]
@@ -67,7 +69,7 @@
   [./xNd3]
     order = FIRST
     family = LAGRANGE
-    #initial_condition = 0.5
+    initial_condition = 0.0
   [../]
 []
 
@@ -85,39 +87,9 @@
 [ICs]
   [./eta]
     variable = eta
-    #type = FunctionIC
-    #function = ic_func_eta
     type = RandomIC
     min = 0.4
     max = 0.6
-  [../]
-  [./xAs]
-    variable = xAs
-    type = FunctionIC
-    function = 0.5
-    #type = RandomIC
-    #min = 0
-    #max = 0.5
-  [../]
-  [./xNd]
-    variable = xNd
-    type = FunctionIC
-    function = ic_func_c
-    #type = RandomIC
-    #min = 0.1
-    #max = 0.9
-  [../]
-  [./xNd2]
-    variable = xNd2
-    type = RandomIC
-    min = 0.1
-    max = 0.9
-  [../]
-  [./xNd3]
-    variable = xNd3
-    type = RandomIC
-    min = 0.1
-    max = 0.9
   [../]
 []
 

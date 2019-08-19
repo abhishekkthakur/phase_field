@@ -276,7 +276,7 @@
   [./constants]
     type = GenericConstantMaterial
     prop_names  = 'L   kappa  D'
-    prop_values = '0.7 1.0    1'
+    prop_values = '0.7 2.0    1'
   [../]
 []
 
@@ -339,7 +339,7 @@
     hj_names  = 'h1 h2 h3'
     gi_name   = g1
     eta_i     = eta1
-    wi        = 1.0
+    wi        = 0.7
     args      = 'xNd1 xNd2 xNd3 xAs1 xAs2 xAs3 eta2 eta3'
   [../]
   [./ACBulkC1_xNd]
@@ -384,7 +384,7 @@
     hj_names  = 'h1 h2 h3'
     gi_name   = g2
     eta_i     = eta2
-    wi        = 1.0
+    wi        = 0.7
     args      = 'xNd1 xNd2 xNd3 xAs1 xAs2 xAs3 eta1 eta3'
   [../]
   [./ACBulkC2_xNd]
@@ -430,7 +430,7 @@
     hj_names  = 'h1 h2 h3'
     gi_name   = g1
     eta_i     = eta1
-    wi        = 1.0
+    wi        = 0.7
     mob_name  = 1
     args      = 'xNd1 xNd2 xNd3 xAs1 xAs2 xAs3 eta2 eta3'
   [../]
@@ -468,7 +468,7 @@
     hj_names  = 'h1 h2 h3'
     gi_name   = g2
     eta_i     = eta2
-    wi        = 1.0
+    wi        = 0.7
     mob_name  = 1
     args      = 'xNd1 xNd2 xNd3 xAs1 xAs2 xAs3 eta1 eta3'
   [../]
@@ -507,7 +507,7 @@
     hj_names  = 'h1 h2 h3'
     gi_name   = g3
     eta_i     = eta3
-    wi        = 1.0
+    wi        = 0.7
     mob_name  = 1
     args      = 'xNd1 xNd2 xNd3 xAs1 xAs2 xAs3 eta1 eta2'
   [../]
@@ -627,7 +627,7 @@
     hj_names = 'h1 h2 h3'
     gj_names = 'g1 g2 g3'
     variable = Energy
-    w = 1
+    w = 0.7
     interfacial_vars =  'eta1  eta2  eta3'
     kappa_names =       'kappa kappa kappa'
   [../]
