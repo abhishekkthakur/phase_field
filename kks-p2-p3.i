@@ -4,8 +4,8 @@
   type = GeneratedMesh
   dim = 2
   elem_type = QUAD4
-  nx = 25
-  ny = 25
+  nx = 100
+  ny = 100
   nz = 0
   xmin = -15
   xmax = 15
@@ -19,6 +19,14 @@
   [./Fglobal]
     order = CONSTANT
     family = MONOMIAL
+  [../]
+[]
+
+[BCs]
+  [./Periodic]
+    [./c_bcs]
+      auto_direction = 'x y'
+    [../]
   [../]
 []
 

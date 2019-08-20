@@ -4,15 +4,23 @@
   type = GeneratedMesh
   dim = 2
   elem_type = QUAD4
-  nx = 25
-  ny = 25
+  nx = 100
+  ny = 100
   nz = 0
-  xmin = -5
-  xmax = 5
-  ymin = -5
-  ymax = 5
+  xmin = -25
+  xmax = 25
+  ymin = -25
+  ymax = 25
   zmin = 0
   zmax = 0
+[]
+
+[BCs]
+  [./Periodic]
+    [./c_bcs]
+      auto_direction = 'x y'
+    [../]
+  [../]
 []
 
 [AuxVariables]
@@ -33,10 +41,12 @@
   [./xAs]
     order = FIRST
     family = LAGRANGE
+    initial_condition = 0.25
   [../]
   [./xNd]
     order = FIRST
     family = LAGRANGE
+    initial_condition = 0.25
   [../]
   # chemical potential
   [./wAs]
@@ -51,23 +61,23 @@
   [./xAs1]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.42
+    initial_condition = 0.0
   [../]
   [./xNd1]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.72
+    initial_condition = 0.0
   [../]
   # phase 2 solute concentration
   [./xAs2]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.42
+    initial_condition = 0.5
   [../]
   [./xNd2]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.72
+    initial_condition = 0.5
   [../]
 []
 
@@ -85,28 +95,28 @@
 [ICs]
   [./eta]
     variable = eta
-    type = FunctionIC
-    function = ic_func_eta
-    #type = RandomIC
-    #min = 0.1
-    #max = 0.9
+    #type = FunctionIC
+    #function = ic_func_eta
+    type = RandomIC
+    min = 0.4
+    max = 0.6
   [../]
-  [./xAs]
-    variable = xAs
-    type = FunctionIC
-    function = ic_func_c
-    #type = RandomIC
-    #min = 0.24
-    #max = 0.26
-  [../]
-  [./xNd]
-    variable = xNd
-    type = FunctionIC
-    function = ic_func_c
-    #type = RandomIC
-    #min = 0.24
-    #max = 0.26
-  [../]
+  #[./xAs]
+  #  variable = xAs
+  #  type = FunctionIC
+  #  function = ic_func_c
+  #  #type = RandomIC
+  #  #min = 0.24
+  #  #max = 0.26
+  #[../]
+  #[./xNd]
+  #  variable = xNd
+  #  type = FunctionIC
+  #  function = ic_func_c
+  #  #type = RandomIC
+  #  #min = 0.24
+  #  #max = 0.26
+  #[../]
 []
 
 [Materials]
