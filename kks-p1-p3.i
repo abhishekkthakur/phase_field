@@ -4,13 +4,13 @@
   type = GeneratedMesh
   dim = 2
   elem_type = QUAD4
-  nx = 25
-  ny = 25
+  nx = 100
+  ny = 1
   nz = 0
   xmin = -10
   xmax = 10
-  ymin = -10
-  ymax = 10
+  ymin = 0
+  ymax = 1
   zmin = 0
   zmax = 0
 []
@@ -21,6 +21,14 @@
     family = MONOMIAL
   [../]
 []
+
+#[BCs]
+#  [./Periodic]
+#    [./c_bcs]
+#      auto_direction = 'x y'
+#    [../]
+#  [../]
+#[]
 
 [Variables]
   # order parameter
