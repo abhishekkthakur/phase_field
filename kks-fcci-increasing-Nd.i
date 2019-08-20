@@ -68,13 +68,10 @@
     #args = 'c1'
     #function = '20*(c1-0.2)^2'
     args = 'xNd1 xAs1'
-    constant_names = 'dEAsAs_p1 dENdNd_p1 dENdAs_p1 L0UNd_p1 L0NdAs_p1 L0UAs_p1 T'
-    constant_expressions = '-1.44 3.84 -3.225 4.17 -3.225 -1.04 300'
+    constant_names = 'dEAsAs_p1 dENdNd_p1 dENdAs_p1 L0UNd_p1 L0NdAs_p1 L0UAs_p1'
+    constant_expressions = '-1.44 3.84 -3.225 4.17 -3.225 -1.04'
     # function = 'xU1:=1-xAs1-xNd1; xU1*-0.15608 + 50*xAs1^2 + 50*xNd1^2'
-    function = 'G0U:=-0.15608;
-                G0Nd:=0.05182;
-                G0As:=0.05182;
-                xU1:=1-xNd1-xAs1; xU1*G0U + xNd1*G0ND + xAs1*G0As + 3*xNd1*xNd1*3.84
+    function = 'xU1:=1-xNd1-xAs1; xU1*-0.15608 + xNd1*0.05182 + xAs1*0.05182 + 3*xNd1*xNd1*3.84
                 + 8.617e-05*300*(xU1*plog(xU1,0.1) + xNd1*plog(xNd1,0.0001) + xAs1*plog(xAs1,0.0001))
                 + xU1*xNd1*L0UNd_p1'
                 #+ 3*xNd1*xNd1*dENdNd_p1
@@ -181,12 +178,6 @@
 []
 
 [Kernels]
-  [./conserved_langevin]
-    type = ConservedLangevinNoise
-    amplitude = 0.005
-    variable = eta2
-    noise = normal_noise
-  []
   #Kernels for diffusion equation
   [./xNdBodyForce]
     variable = xNd
@@ -556,7 +547,7 @@
   l_tol = 1.0e-8
   nl_rel_tol = 1.0e-9
   nl_abs_tol = 1.0e-9
-  end_time = 3e7
+  end_time = 1e7
   dtmax = 1e6
 
   [./TimeStepper]
@@ -565,7 +556,7 @@
     iteration_window = 2
     growth_factor = 1.5
     #dt = 1e-5
-    dt = 1e2
+    dt = 1
   [../]
   [./Predictor]
     type = SimplePredictor
@@ -583,12 +574,6 @@
   [./mydebug]
     type = FDP
     full = true
-  [../]
-[]
-
-[UserObjects]
-  [./normal_noise]
-    type = ConservedNormalNoise
   [../]
 []
 

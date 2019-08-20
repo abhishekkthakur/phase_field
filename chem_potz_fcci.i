@@ -18,6 +18,10 @@
 []
 
 [AuxVariables]
+  [./Energy]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
   # Global concentrations
   [./xAs]
     order = FIRST
@@ -81,10 +85,6 @@
     order = FIRST
     family = LAGRANGE
     initial_condition = 0.0
-  [../]
-  [./Energy]
-    order = CONSTANT
-    family = MONOMIAL
   [../]
 []
 
@@ -161,8 +161,6 @@
   [./f1]
     type = DerivativeParsedMaterial
     f_name = F1
-    #args = 'c1'
-    #function = '20*(c1-0.2)^2'
     args = 'xNd1 xAs1'
     constant_names = 'dEAsAs_p1 dENdNd_p1 dENdAs_p1 L0UNd_p1 L0NdAs_p1 L0UAs_p1'
     constant_expressions = '-1.44 3.84 -3.225 4.17 -3.225 -1.04'
@@ -176,8 +174,6 @@
   [./f2]
     type = DerivativeParsedMaterial
     f_name = F2
-    #args = 'c2'
-    #function = '20*(c2-0.5)^2'
     args = 'xNd2 xAs2'
     constant_names = 'dENdAs factor1 L0UNd_p2 L0UAs_p2 L0NdAs_p2'
     constant_expressions = '-1.57 200 1.01 11.38 16.65'
@@ -190,8 +186,6 @@
   [./f3]
     type = DerivativeParsedMaterial
     f_name = F3
-    #args = 'c3'
-    #function = '20*(c3-0.8)^2'
     args = 'xNd3 xAs3'
     constant_names = 'factor2 L0UNd_p3 L0NdAs_p3 L0UAs_p3'
     constant_expressions = '100 -1.46 3.60 3.52'
@@ -201,94 +195,20 @@
                 + 0'
     outputs = exodus
   [../]
+[../]
 
-  # Switching functions for each phase
-  # h1(eta1, eta2, eta3)
-  [./h1]
-    type = SwitchingFunction3PhaseMaterial
-    eta_i = eta1
-    eta_j = eta2
-    eta_k = eta3
-    f_name = h1
-  [../]
-  # h2(eta1, eta2, eta3)
-  [./h2]
-    type = SwitchingFunction3PhaseMaterial
-    eta_i = eta2
-    eta_j = eta3
-    eta_k = eta1
-    f_name = h2
-  [../]
-  # h3(eta1, eta2, eta3)
-  [./h3]
-    type = SwitchingFunction3PhaseMaterial
-    eta_i = eta3
-    eta_j = eta1
-    eta_k = eta2
-    f_name = h3
-  [../]
-
-  # Coefficients for diffusion equation
-  [./Dh1]
-    type = DerivativeParsedMaterial
-    material_property_names = 'D h1'
-    function = D*h1
-    f_name = Dh1
-  [../]
-  [./Dh2]
-    type = DerivativeParsedMaterial
-    material_property_names = 'D h2'
-    function = D*h2
-    f_name = Dh2
-  [../]
-  [./Dh3]
-    type = DerivativeParsedMaterial
-    material_property_names = 'D h3'
-    function = D*h3
-    f_name = Dh3
-  [../]
-
-  # Barrier functions for each phase
-  [./g1]
-    type = BarrierFunctionMaterial
-    g_order = SIMPLE
-    eta = eta1
-    function_name = g1
-  [../]
-  [./g2]
-    type = BarrierFunctionMaterial
-    g_order = SIMPLE
-    eta = eta2
-    function_name = g2
-  [../]
-  [./g3]
-    type = BarrierFunctionMaterial
-    g_order = SIMPLE
-    eta = eta3
-    function_name = g3
-  [../]
-
-  # constant properties
-  [./constants]
-    type = GenericConstantMaterial
-    prop_names  = 'L   kappa  D'
-    prop_values = '0.7 1.5    1'
-  [../]
-[]
-
-
-[AuxKernels]
-  [./Energy_total]
-    type = KKSMultiFreeEnergy
-    Fj_names = 'F1 F2 F3'
-    hj_names = 'h1 h2 h3'
-    gj_names = 'g1 g2 g3'
-    variable = Energy
-    w = 1.35
-    interfacial_vars =  'eta1  eta2  eta3'
-    kappa_names =       'kappa kappa kappa'
-  [../]
-[]
+#[AuxKernels]
+#  [./Energy_total]
+#    type = KKSMultiFreeEnergy
+#    Fj_names = 'F1 F2 F3'
+#    hj_names = 'h1 h2 h3'
+#    gj_names = 'g1 g2 g3'
+#    variable = Energy
+#    w = 1.35
+#    interfacial_vars =  'eta1  eta2  eta3'
+#    kappa_names =       'kappa kappa kappa'
+#  [../]
+#[]
 
 [Executioner]
   type = Transient
@@ -331,23 +251,22 @@
   [../]
 []
 
-[Postprocessors]
-  [./XNd]
-    type = ElementAverageValue
-    variable = xNd
-  [../]
-  [./XAs]
-    type = ElementAverageValue
-    variable = xAs
-  [../]
-  [./Ftotal]
-    type = ElementIntegralVariablePostprocessor
-    variable = Energy
-  [../]
-[]
+#[Postprocessors]
+#  [./XNd]
+#    type = ElementAverageValue
+#    variable = xNd
+#  [../]
+#  [./XAs]
+#    type = ElementAverageValue
+#    variable = xAs
+#  [../]
+#  [./Ftotal]
+#    type = ElementIntegralVariablePostprocessor
+#    variable = Energy
+#  [../]
+#[]
 
 [Outputs]
   exodus = true
-  print_linear_residuals = false
   csv = true
 []
