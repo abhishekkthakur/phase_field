@@ -20,6 +20,10 @@
   [../]
   [./xNd]
     initial_from_file_var = xNd
+    # [./InitialCondition]
+    #   type = FunctionIC
+    #   function = '(1-tanh((x+4)*3))/4'
+    # [../]
   [../]
   # order parameter 1
   [./eta1]
@@ -28,6 +32,10 @@
   # order parameter 2
   [./eta2]
     initial_from_file_var = eta2
+    # [./InitialCondition]
+    #   type = FunctionIC
+    #   function = '(1-tanh((x+4)*3))/2'
+    # [../]
   [../]
   # order parameter 3
   [./eta3]
@@ -46,6 +54,10 @@
   [../]
   [./xNd2]
     initial_from_file_var = xNd2
+    # [./InitialCondition]
+    #   type = FunctionIC
+    #   function = '(1-tanh((x+4)*3))/4'
+    # [../]
   [../]
   # Local phase concentration 3
   [./xAs3]
@@ -72,9 +84,9 @@
     constant_expressions = '-1.44 3.84 -3.225 4.17 -3.225 -1.04 300'
     # function = 'xU1:=1-xAs1-xNd1; xU1*-0.15608 + 50*xAs1^2 + 50*xNd1^2'
     function = 'G0U:=-0.15608;
-                G0Nd:=0.05182;
+                G0Nd:=1;
                 G0As:=0.05182;
-                xU1:=1-xNd1-xAs1; xU1*G0U + xNd1*G0ND + xAs1*G0As + 3*xNd1*xNd1*3.84
+                xU1:=1-xNd1-xAs1; xU1*G0U + xNd1*G0Nd + xAs1*G0As + 3*xNd1*xNd1*3.84
                 + 8.617e-05*300*(xU1*plog(xU1,0.1) + xNd1*plog(xNd1,0.0001) + xAs1*plog(xAs1,0.0001))
                 + xU1*xNd1*L0UNd_p1'
                 #+ 3*xNd1*xNd1*dENdNd_p1
@@ -98,11 +110,11 @@
     #args = 'c3'
     #function = '20*(c3-0.8)^2'
     args = 'xNd3 xAs3'
-    constant_names = 'factor2 L0UNd_p3 L0NdAs_p3 L0UAs_p3'
-    constant_expressions = '100 -1.46 3.60 3.52'
+    constant_names = 'factor2 factor3 L0UNd_p3 L0NdAs_p3 L0UAs_p3'
+    constant_expressions = '10 190 -1.46 3.60 3.52'
     function = 'xU3:=1-xNd3-xAs3; 0.5*-0.08724 + 0.5*-0.26 + -1.03
-                + factor2*((0.5-xNd3-xAs3)*(0.5-xNd3-xAs3) + (xAs3-0.5)*(xAs3-0.5))
-                + 0
+                + factor2*(0.5-xNd3-xAs3)^2 + factor3*(xAs3-0.5)^2
+                + 8.617e-05*300*(xNd3*plog(xNd3,0.0001))
                 + 0'
   [../]
 
@@ -178,12 +190,20 @@
     prop_names  = 'L   kappa  D'
     prop_values = '0.7 1.0    1'
   [../]
+
+  [./phase]
+    type = ParsedMaterial
+    args = 'eta1 eta2 eta3'
+    f_name = P
+    function = 'if(eta1>eta2 & eta1>eta3, 1, if(eta2>eta3, 2, 3))'
+    outputs = exodus
+  [../]
 []
 
 [Kernels]
   [./conserved_langevin]
     type = ConservedLangevinNoise
-    amplitude = 0.005
+    amplitude = 0.01
     variable = eta2
     noise = normal_noise
   []
@@ -556,8 +576,8 @@
   l_tol = 1.0e-8
   nl_rel_tol = 1.0e-9
   nl_abs_tol = 1.0e-9
-  end_time = 3e7
-  dtmax = 1e6
+  end_time = 1.5e7
+  dtmax = 1e5
 
   [./TimeStepper]
     type = IterationAdaptiveDT
@@ -571,6 +591,8 @@
     type = SimplePredictor
     scale = 0.5
   [../]
+
+
 
 []
 
@@ -596,6 +618,18 @@
   [./XNd]
     type = ElementAverageValue
     variable = xNd
+  [../]
+  [./phase1]
+    type = ElementAverageValue
+    variable = eta1
+  [../]
+  [./phase2]
+    type = ElementAverageValue
+    variable = eta2
+  [../]
+  [./phase3]
+    type = ElementAverageValue
+    variable = eta3
   [../]
 []
 

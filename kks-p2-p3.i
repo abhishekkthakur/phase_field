@@ -7,10 +7,10 @@
   nx = 100
   ny = 100
   nz = 0
-  xmin = -30
-  xmax = 30
-  ymin = -30
-  ymax = 30
+  xmin = -5
+  xmax = 5
+  ymin = -5
+  ymax = 5
   zmin = 0
   zmax = 0
 []
