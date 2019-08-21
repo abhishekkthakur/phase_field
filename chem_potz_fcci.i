@@ -17,7 +17,7 @@
   elem_type = QUAD4
 []
 
-[AuxVariables]
+[Variables]
   [./Energy]
     order = CONSTANT
     family = MONOMIAL
@@ -56,7 +56,7 @@
   [./xNd1]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0
+    #initial_condition = 0
   [../]
   # Local phase concentration 2
   [./xAs2]
@@ -78,13 +78,13 @@
   [./xNd3]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.5
+    #initial_condition = 0.5
   [../]
   # Lagrange multiplier
   [./lambda]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.0
+    #initial_condition = 0.0
   [../]
 []
 
@@ -108,9 +108,6 @@
     variable = eta1
     type = FunctionIC
     function = ic_func_eta_left
-    #type = RandomIC
-    #min = 0.1
-    #max = 0.9
   [../]
   [./eta2]
     variable = eta2
@@ -121,25 +118,16 @@
     variable = eta3
     type = FunctionIC
     function = ic_func_eta_right
-    #type = RandomIC
-    #min = 0.1
-    #max = 0.9
   [../]
   [./xAs]
     variable = xAs
     type = FunctionIC
     function = ic_func_c
-    #type = RandomIC
-    #min = 0
-    #max = 0.5
   [../]
   [./xNd]
     variable = xNd
     type = FunctionIC
     function = 0
-    #type = RandomIC
-    #min = 0.2
-    #max = 0.5
   [../]
   [./xAs1]
     variable = xAs1
@@ -157,14 +145,13 @@
 
 
 [Materials]
-  # simple toy free energies
   [./f1]
     type = DerivativeParsedMaterial
+    derivative_order = 1
     f_name = F1
     args = 'xNd1 xAs1'
     constant_names = 'dEAsAs_p1 dENdNd_p1 dENdAs_p1 L0UNd_p1 L0NdAs_p1 L0UAs_p1 T'
     constant_expressions = '-1.44 3.84 -3.225 4.17 -3.225 -1.04 300'
-    # function = 'xU1:=1-xAs1-xNd1; xU1*-0.15608 + 50*xAs1^2 + 50*xNd1^2'
     function = 'G0U:=-8407.734 + 130.955151*T - 26.9182*T*log(T) + 1.25156e-03*T^2 - 4.42605e-06*T^3 + 38568/T;
                 G0Nd:=0.05182;
                 G0As:=0.05182;
@@ -173,9 +160,11 @@
                 + xU1*xNd1*L0UNd_p1'
                 #+ 3*xNd1*xNd1*dENdNd_p1
     outputs = exodus
+    #output_properties =
   [../]
   [./f2]
     type = DerivativeParsedMaterial
+    derivative_order = 1
     f_name = F2
     args = 'xNd2 xAs2'
     constant_names = 'dENdAs factor1 L0UNd_p2 L0UAs_p2 L0NdAs_p2 T'
@@ -190,6 +179,7 @@
   [../]
   [./f3]
     type = DerivativeParsedMaterial
+    derivative_order = 1
     f_name = F3
     args = 'xNd3 xAs3'
     constant_names = 'factor2 L0UNd_p3 L0NdAs_p3 L0UAs_p3 T'
@@ -207,8 +197,6 @@
 [Executioner]
   type = Transient
   solve_type = NEWTON #'PJFNK'
-  # petsc_options_iname = '-pc_type -sub_pc_type   -sub_pc_factor_shift_type'
-  # petsc_options_value = 'asm       ilu            nonzero'
   petsc_options_iname = '-pc_type  -pc_factor_shift_type'
   petsc_options_value = 'lu        nonzero'
   l_max_its = 100
@@ -243,6 +231,10 @@
     type = FDP
     full = true
   [../]
+[]
+
+[Problem]
+  kernel_coverage_check = false
 []
 
 [Outputs]
